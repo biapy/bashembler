@@ -1,0 +1,6 @@
+[submodule "lib/biapy-bashlings"]
+	path = lib/biapy-bashlings
+	url = https://github.com/biapy/biapy-bashlings.git
+[submodule "lib/shdoc"]
+	path = lib/shdoc
+	url = https://github.com/reconquest/shdoc

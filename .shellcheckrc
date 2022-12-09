@@ -1,0 +1,5 @@
+external-sources=false
+source-path=src
+source-path=src/internals
+source-path=lib/biapy-bashlings/src/
+source-path=lib/biapy-bashlings/src/internals
