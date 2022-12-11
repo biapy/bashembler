@@ -64,8 +64,50 @@ Describe 'include-sources'
             The error should equal ""
         End
 
+        It "fails when --level option is used without argument"
+            When call include-sources --level 'argument 1'
+            The status should be failure
+            The output should equal ""
+            The error should equal "Error: --level requires an argument."
+        End
+
+        It "fails quietly when --level option is used without argument"
+            When call include-sources --quiet --level 'argument 1'
+            The status should be failure
+            The output should equal ""
+            The error should equal ""
+        End
+
+        It "fails when --level option argument is not an integer"
+            When call include-sources --level=a 'argument 1'
+            The status should be failure
+            The output should equal ""
+            The error should equal "Error: --level value is not an integer."
+        End
+
+        It "fails quietly when --level option argument is not an integer"
+            When call include-sources --quiet --level=a 'argument 1'
+            The status should be failure
+            The output should equal ""
+            The error should equal ""
+        End
+
+        It "fails when --level option is used without --origin"
+            When call include-sources --level=1 'src/bashembler.bash'
+            The status should be failure
+            The output should equal ""
+            The error should equal "Error: --level option requires --origin to be specified."
+        End
+
+        It "fails quietly when --level option is used without --origin"
+            When call include-sources --quiet --level=1 'src/bashembler.bash'
+            The status should be failure
+            The output should equal ""
+            The error should equal ""
+        End
+
         It "fails when --output option is used without argument"
-            When call include-sources --output 'argument 1'
+            When call include-sources --output 'src/bashembler.bash'
             The status should be failure
             The output should equal ""
             The error should equal "Error: --output requires an argument."
@@ -181,7 +223,8 @@ EOF
             The line 1 of output should equal "#!/bin/bash"
             The line 2 of output should equal 'echo "The origin file contents."'
             The line 3 of output should equal 'echo "The sourced file contents."'
-            The error should equal "Info: file '${sourced_file}' included successfully."
+            The line 1 of error should equal "Assembling ${origin_file}"
+            The line 2 of error should equal " + ${sourced_file##*/}"
         End
 
         It "includes sourced file into output quietly."
@@ -193,7 +236,7 @@ EOF
             The error should equal ""
         End
 
-        It "fails quietly when output file directory does not exists."
+        It "includes sourced file into output and write output to file."
             Path output-file="${output_file}"
             When call include-sources --output="${output_file}" "${origin_file}"
             The status should be success
@@ -202,17 +245,18 @@ EOF
             The line 1 of file output-file contents should equal "#!/bin/bash"
             The line 2 of file output-file contents should equal 'echo "The origin file contents."'
             The line 3 of file output-file contents should equal 'echo "The sourced file contents."'
-            The error should equal "Info: file '${sourced_file}' included successfully."
+            The line 1 of error should equal "Assembling ${origin_file}"
+            The line 2 of error should equal " + ${sourced_file##*/}"
         End
 
-        It "breaks circular sourcing."
+        It "ignore circular sourcing."
             When call include-sources "${infinite_sourcing_file}"
             The status should be success
             The line 1 of output should equal "#!/bin/bash"
             The line 2 of output should equal 'echo "The infinite sourcing file contents."'
             The line 3 of output should equal 'echo "This file source itself infinitely."'
-            The line 1 of error should equal "Info: file '${circular_sourcing_file}' is already included."
-            The line 2 of error should equal "Info: file '${circular_sourcing_file}' included successfully."
+            The line 1 of error should equal "Assembling ${infinite_sourcing_file}"
+            The line 2 of error should equal " + ${circular_sourcing_file##*/}"
         End
 
         It "fails when a source is missing."
@@ -220,8 +264,10 @@ EOF
             The status should be failure
             The line 1 of output should equal "#!/bin/bash"
             The line 2 of output should equal 'echo "The broken script sourcing file contents."'
-            The line 1 of error should equal "Error: can not resolve command 'source \"${missing_target_file}\"' in file '${source_missing_file}'."
-            The line 2 of error should equal "Error: failed during assembly of file '${broken_sourcing_file}'."
+            The line 1 of error should equal "Assembling ${broken_sourcing_file}"
+            The line 2 of error should equal " + ${source_missing_file##*/}"
+            The line 3 of error should equal "Error: can not resolve command 'source \"${missing_target_file}\"' in file '${source_missing_file}'."
+            The line 4 of error should equal "Error: failed during assembly of file '${broken_sourcing_file}'."
         End
     End
 End

@@ -25,6 +25,7 @@ source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 #
 # @option -q | --quiet Disable error messages when present.
 # @option -v | --verbose Trigger verbose mode when present.
+# @option --level=<level> The distance from origin shell script (0 for origin).
 # @option --origin=<origin-file-path> The origin shell script file path (i.e, first processed file, before recursion).
 # @option --output=<output-file-path> The output shell script file path.
 #
@@ -59,6 +60,7 @@ function include-sources() {
   local line_count
   local source_command
   local sourced_file
+  local level=0
 
   # Detect if quiet mode is enabled, to allow for output silencing.
   in-list "(-q|--quiet)" ${@+"$@"} && quiet=1
@@ -111,7 +113,7 @@ function include-sources() {
   declare -a arguments
   arguments=()
   declare -a allowed_options
-  allowed_options=('verbose' 'quiet' 'origin&' 'output&')
+  allowed_options=('verbose' 'quiet' 'level&' 'origin&' 'output&')
   ### Process function options.
   cecho "DEBUG" "Debug: processing options." >&"${verbose_fd-2}"
   if ! process-options "${allowed_options[*]}" ${@+"$@"} 2>&"${error_fd-2}"; then
@@ -124,6 +126,13 @@ function include-sources() {
   options=()
   [[ "${quiet-0}" -ne 0 ]] && options+=('--quiet')
   [[ "${verbose-0}" -ne 0 ]] && options+=('--verbose')
+
+  # Ensure level is an integer
+  if [[ ! "${level}" =~ ^[0-9]+$ ]]; then
+    cecho "ERROR" "Error: --level value is not an integer." >&"${error_fd-2}"
+    close-fds
+    return 1
+  fi
 
   # Accept one and only one argument.
   cecho "DEBUG" "Debug: checking provided arguments count." >&"${verbose_fd-2}"
@@ -159,12 +168,25 @@ function include-sources() {
 
   # If the file is not a sourced file (ie. is the root shellscript),
   if [[ -z "${origin-}" ]]; then
+    # Make sure level is 0 when the file is the root shellscript.
+    if ((level > 0)); then
+      cecho "ERROR" "Error: --level option requires --origin to be specified." >&"${error_fd-2}"
+      close-fds
+      return 1
+    fi
+
+    cecho 'SUCCESS' "Assembling ${input-}" >&"${error_fd-2}"
+
     # Initialize output file
     cecho "DEBUG" "Debug: initialization of output file." >&"${verbose_fd-2}"
     [[ "${output-}" != "/dev/stdout" ]] && echo -n "" > "${output-}"
 
     # Declare sourced_files list for this function and its recursions.
     local sourced_files=()
+  elif ((level > 0)); then
+    # Level is specified and origin is not empty,
+    # the input file is a sourced file.
+    cecho 'SUCCESS' " + ${input##*/}" >&"${error_fd-2}"
   fi
 
   cecho "DEBUG" "Debug: looping over input file '${input-}' lines." >&"${verbose_fd-2}"
@@ -232,39 +254,44 @@ function include-sources() {
       fi
     fi
 
-    # If the sourced-file-path call is successfull.
-    if [[ -n "${sourced_file-}" ]]; then
-      # Detect the root origin of the assemblage.
-      local source_origin="${input-}"
-      [[ -n "${origin-}" ]] && source_origin="${origin-}"
-
-      # Check if sourced_file has not been already sourced
-      # (ie. is not listed in sourced_files)
-      if [[ ! " ${sourced_files[*]-} " == *" ${sourced_file-} "* ]]; then
-        # Add file to sourced list,
-        sourced_files+=("${sourced_file-}")
-
-        # Write sourced file contents to output.
-        cecho 'DEBUG' "Debug: including file '${sourced_file}' in output." >&"${verbose_fd-2}"
-
-        if ! include-sources ${options[@]+"${options[@]}"} \
-            --origin="${source_origin-}" \
-            --output="${output-}" \
-            "${sourced_file-}"; then
-          if [[ -z "${origin-}" ]]; then
-            cecho "ERROR" "Error: failed during assembly of file '${input-}'." >&"${error_fd-2}"
-          else
-            cecho "ERROR" "Error: failed including file '${source_origin-}' in '${input-}'." >&"${error_fd-2}"
-          fi
-          close-fds
-          return 1
-        fi
-
-        cecho 'SUCCESS' "Info: file '${sourced_file-}' included successfully." >&"${error_fd-2}"
-      else
-        cecho 'INFO' "Info: file '${sourced_file-}' is already included." >&"${error_fd-2}"
-      fi
+    # If the sourced-file path is empty, skip to next line.
+    if [[ -z "${sourced_file-}" ]]; then
+      continue
     fi
+
+    # If the sourced-file-path is call is successfull.
+    # Detect the root origin of the assemblage.
+    local source_origin="${input-}"
+    [[ -n "${origin-}" ]] && source_origin="${origin-}"
+
+    # Check if sourced_file is already sourced
+    # (ie. is listed in sourced_files)
+    if [[ " ${sourced_files[*]-} " == *" ${sourced_file-} "* ]]; then
+      # If already sourced, skip to next line.
+      cecho 'INFO' " - ${sourced_file##*/} skipped." >&"${verbose_fd-2}"
+      continue
+    fi
+
+    # Add file to sourced list,
+    sourced_files+=("${sourced_file-}")
+
+    # Write sourced file contents to output.
+    cecho 'DEBUG' "Debug: including file '${sourced_file}' in output." >&"${verbose_fd-2}"
+
+    if ! include-sources ${options[@]+"${options[@]}"} \
+        --level=$((level + 1)) \
+        --origin="${source_origin-}" \
+        --output="${output-}" \
+        "${sourced_file-}"; then
+      if [[ -z "${origin-}" ]]; then
+        cecho "ERROR" "Error: failed during assembly of file '${input-}'." >&"${error_fd-2}"
+      else
+        cecho "ERROR" "Error: failed including file '${source_origin-}' in '${input-}'." >&"${error_fd-2}"
+      fi
+      close-fds
+      return 1
+    fi
+
   done < "${input-}"
 
   cecho "DEBUG" "Debug: end of file '${input-}' processing." >&"${verbose_fd-2}"
