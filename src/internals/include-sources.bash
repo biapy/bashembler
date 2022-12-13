@@ -5,8 +5,9 @@
 
 # shellcheck source-path=SCRIPTDIR
 source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/cecho.bash"
-source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/realpath.bash"
 source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/process-options.bash"
+source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/realpath.bash"
+source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/repeat-string.bash"
 source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 
 # @description
@@ -25,6 +26,7 @@ source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 #
 # @option -q | --quiet Disable error messages when present.
 # @option -v | --verbose Trigger verbose mode when present.
+# @option --discard-comments Remove comment lines (eg, starting by '#') from assembled file.
 # @option --level=<level> The distance from origin shell script (0 for origin).
 # @option --origin=<origin-file-path> The origin shell script file path (i.e, first processed file, before recursion).
 # @option --output=<output-file-path> The output shell script file path.
@@ -51,16 +53,20 @@ function include-sources() {
   local arguments
   local quiet=0
   local verbose=0
+  local discard_comments=0
   local origin=''
   local input
   local output='/dev/stdout'
   local options
+  local include_options
 
   local line
   local line_count
   local source_command
   local sourced_file
   local level=0
+  local indent=''
+  local indent_string=' | '
 
   # Detect if quiet mode is enabled, to allow for output silencing.
   in-list "(-q|--quiet)" ${@+"$@"} && quiet=1
@@ -113,7 +119,7 @@ function include-sources() {
   declare -a arguments
   arguments=()
   declare -a allowed_options
-  allowed_options=('verbose' 'quiet' 'level&' 'origin&' 'output&')
+  allowed_options=('verbose' 'quiet' 'discard-comments' 'level&' 'origin&' 'output&')
   ### Process function options.
   cecho "DEBUG" "Debug: processing options." >&"${verbose_fd-2}"
   if ! process-options "${allowed_options[*]}" ${@+"$@"} 2>&"${error_fd-2}"; then
@@ -127,8 +133,12 @@ function include-sources() {
   [[ "${quiet-0}" -ne 0 ]] && options+=('--quiet')
   [[ "${verbose-0}" -ne 0 ]] && options+=('--verbose')
 
+  declare -a include_options
+  include_options=()
+  [[ "${discard_comments-0}" -ne 0 ]] && include_options+=('--discard-comments')
+
   # Ensure level is an integer
-  if [[ ! "${level}" =~ ^[0-9]+$ ]]; then
+  if [[ -z "${level}" || ! "${level}" =~ ^[0-9]+$ ]]; then
     cecho "ERROR" "Error: --level value is not an integer." >&"${error_fd-2}"
     close-fds
     return 1
@@ -166,6 +176,9 @@ function include-sources() {
     return 1
   fi
 
+  # Generate sourced file message indent.
+  indent="$(repeat-string "${level}" "${indent_string}")"
+
   # If the file is not a sourced file (ie. is the root shellscript),
   if [[ -z "${origin-}" ]]; then
     # Make sure level is 0 when the file is the root shellscript.
@@ -186,7 +199,7 @@ function include-sources() {
   elif ((level > 0)); then
     # Level is specified and origin is not empty,
     # the input file is a sourced file.
-    cecho 'SUCCESS' " + ${input##*/}" >&"${error_fd-2}"
+    cecho 'SUCCESS' "${indent}${input##*/}" >&"${error_fd-2}"
   fi
 
   cecho "DEBUG" "Debug: looping over input file '${input-}' lines." >&"${verbose_fd-2}"
@@ -205,6 +218,14 @@ function include-sources() {
     if [[ -n "${origin}" && "${line_count}" -eq 1 && "${line}" =~ ^\#\! ]]; then
       cecho 'DEBUG' "Debug: discarding shebang at line ${line_count} of file '${input}'." >&"${verbose_fd-2}"
       # Skip shebang.
+      continue
+    fi
+
+    # Discard comments except initial shebang.
+    if [[ "${discard_comments}" -ne 0 && "${line}" =~ ^[[:blank:]]*\# \
+      && ! ( -z "${origin}" && "${line_count}" -eq 1 ) ]]; then
+      cecho 'DEBUG' "Debug: discarding comment at line ${line_count} of file '${input}'." >&"${verbose_fd-2}"
+      # Skip comment.
       continue
     fi
 
@@ -268,7 +289,7 @@ function include-sources() {
     # (ie. is listed in sourced_files)
     if [[ " ${sourced_files[*]-} " == *" ${sourced_file-} "* ]]; then
       # If already sourced, skip to next line.
-      cecho 'INFO' " - ${sourced_file##*/} skipped." >&"${verbose_fd-2}"
+      cecho 'INFO' "${indent}${indent_string}${sourced_file##*/} skipped." >&"${error_fd-2}"
       continue
     fi
 
@@ -279,6 +300,7 @@ function include-sources() {
     cecho 'DEBUG' "Debug: including file '${sourced_file}' in output." >&"${verbose_fd-2}"
 
     if ! include-sources ${options[@]+"${options[@]}"} \
+        ${include_options[@]+"${include_options[@]}"} \
         --level=$((level + 1)) \
         --origin="${source_origin-}" \
         --output="${output-}" \

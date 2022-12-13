@@ -224,7 +224,7 @@ EOF
             The line 2 of output should equal 'echo "The origin file contents."'
             The line 3 of output should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " + ${sourced_file##*/}"
+            The line 2 of error should equal " | ${sourced_file##*/}"
         End
 
         It "includes sourced file into output quietly."
@@ -246,7 +246,7 @@ EOF
             The line 2 of file output-file contents should equal 'echo "The origin file contents."'
             The line 3 of file output-file contents should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " + ${sourced_file##*/}"
+            The line 2 of error should equal " | ${sourced_file##*/}"
         End
 
         It "ignore circular sourcing."
@@ -256,7 +256,8 @@ EOF
             The line 2 of output should equal 'echo "The infinite sourcing file contents."'
             The line 3 of output should equal 'echo "This file source itself infinitely."'
             The line 1 of error should equal "Assembling ${infinite_sourcing_file}"
-            The line 2 of error should equal " + ${circular_sourcing_file##*/}"
+            The line 2 of error should equal " | ${circular_sourcing_file##*/}"
+            The line 3 of error should equal " |  | ${circular_sourcing_file##*/} skipped."
         End
 
         It "fails when a source is missing."
@@ -265,7 +266,7 @@ EOF
             The line 1 of output should equal "#!/bin/bash"
             The line 2 of output should equal 'echo "The broken script sourcing file contents."'
             The line 1 of error should equal "Assembling ${broken_sourcing_file}"
-            The line 2 of error should equal " + ${source_missing_file##*/}"
+            The line 2 of error should equal " | ${source_missing_file##*/}"
             The line 3 of error should equal "Error: can not resolve command 'source \"${missing_target_file}\"' in file '${source_missing_file}'."
             The line 4 of error should equal "Error: failed during assembly of file '${broken_sourcing_file}'."
         End

@@ -1,0 +1,84 @@
+# src/internal/include-sources.bash
+
+`bashembler` logic, recursivly including sourced files in main script.
+
+## Overview
+
+include-sources read line by line a bash (or sh script) and look for
+`source` (or dot (i.e. `.`)) commands. When a `source` command is
+encountered, `include-sources` try to resolve the sourced file path, and
+recursively process the sourced files. Each read line is outputed as is
+to `/dev/stdout`, except for the source commands which are replaced by
+the sourced files.
+
+## Index
+
+* [include-sources](#include-sources)
+
+### include-sources
+
+include-sources read line by line a bash (or sh script) and look for
+`source` (or dot (i.e. `.`)) commands. When a `source` command is
+encountered, `include-sources` try to resolve the sourced file path, and
+recursively process the sourced files. Each read line is outputed as is
+to `/dev/stdout`, except for the source commands which are replaced by
+the sourced files.
+
+#### Example
+
+```bash
+source "${BASH_SOURCE[0]%/*}/libs/biapy-bashlings/src/internals/include-sources.bash"
+$contents="$( include-sources --origin="src/my-script.bash" "src/my-script.bash" )"
+```
+
+#### Options
+
+* **-q** | **--quiet**
+
+  Disable error messages when present.
+
+* **-v** | **--verbose**
+
+  Trigger verbose mode when present.
+
+* **--level=\<level\>**
+
+  The distance from origin shell script (0 for origin).
+
+* **--origin=\<origin-file-path\>**
+
+  The origin shell script file path (i.e, first processed file, before recursion).
+
+* **--output=\<output-file-path\>**
+
+  The output shell script file path.
+
+#### Arguments
+
+* **$1** (string): A `bash` (or `sh`) script file.
+
+#### Exit codes
+
+* **0**: If `bash`` script assembly is successful.
+* **1**: If include-sources failed to assemble the script.
+* **1**: If argument is missing, or more than one argument provided.
+* **1**: If include-sources is unable to find a sourced file.
+
+#### Output on stdout
+
+* The one-file version of the $1 script, with sourced files included, if `--output` is not used.
+
+#### Output on stderr
+
+* Error if argument is missing, or more than one argument provided.
+* Error if invalid option provided.
+* Error if include-sources is unable to find a sourced file.
+
+#### See also
+
+* [https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash](https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash)
+* [cecho](#cecho)
+* [realpath](#realpath)
+* [process-options](#process-options)
+* [sourced-file-path](#sourced-file-path)
+

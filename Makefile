@@ -71,7 +71,7 @@ build-clean: # Remove built file.
 	@$(RM) 'bin/bashembler'
 
 bin/bashembler: # Assemble bashembler script for release.
-	bash 'src/bashembler.bash' --output='bin/bashembler' 'src/bashembler.bash'
+	bash 'src/bashembler.bash' --discard-comments --output='bin/bashembler' 'src/bashembler.bash'
 
 ###
 # Front-end rules.

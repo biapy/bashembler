@@ -46,6 +46,7 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 # @option -V | --version Display version.
 # @option -q | --quiet Disable error message output.
 # @option -v | --verbose Enable verbose mode.
+# @option -c | --discard-comments Remove comment lines from assembled file.
 # @option -w | --overwrite Overwrite output path if it is an existing file.
 # @option -o<output-path> | --output=<output-path> Write output to given path.
 #
@@ -70,6 +71,7 @@ function bashembler() {
   local quiet=0
   local verbose=0
   local overwrite=0
+  local discard_comments=0
   local input_path=''
   local output_path='-'
   local options
@@ -136,6 +138,7 @@ Usage:
 
   bashembler --output=<final-script.bash> <splitted-script.bash>
 
+-c | --discard-comments Remove comment lines from assembled file.
 # @arg $1 string A `bash`` (or `sh`) script file.
 #
 # @stdout The one-file version of the $1 script, with sourced files included.
@@ -168,6 +171,9 @@ EOF
         ;;
       '-q' | '--quiet')
         quiet=1
+        ;;
+      '-c' | '--discard-comments' )
+        discard_comments=1
         ;;
       '-w' | '--overwrite')
         overwrite=1
@@ -236,6 +242,7 @@ EOF
   options=()
   [[ "${quiet-0}" -ne 0 ]] && options+=('--quiet')
   [[ "${verbose-0}" -ne 0 ]] && options+=('--verbose')
+  [[ "${discard_comments-0}" -ne 0 ]] && options+=('--discard-comments')
 
   include-sources "${options[@]}" \
     --output="${output_path}" "${input_path}"
