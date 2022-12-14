@@ -160,8 +160,7 @@ function sourced-file-path {
     cecho 'DEBUG' "Debug: Sourced file starts with variable parts." >&"${verbose_fd-2}"
     cecho 'DEBUG' "Debug: Removing variable parts from '${file-}'" >&"${verbose_fd-2}"
     # shellcheck disable=SC2016
-    cleaned_file="$(echo "${file-}" \
-      | sed -e 's#^\${BASH_SOURCE\[0\]%/\*}/##')"
+    cleaned_file="${file#\$\{BASH_SOURCE\[0\]%\/\*\}\/}"
     cecho 'DEBUG' "Debug: Removal result is '${cleaned_file-}'" >&"${verbose_fd-2}"
 
     cecho 'DEBUG' "Debug: Finding realpath for '${input_folder-}/${cleaned_file-}'" >&"${verbose_fd-2}"
