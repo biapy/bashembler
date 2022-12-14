@@ -242,7 +242,7 @@ EOF
   [[ "${verbose-0}" -ne 0 ]] && options+=('--verbose')
   [[ "${discard_comments-0}" -ne 0 ]] && options+=('--discard-comments')
 
-  include-sources "${options[@]}" \
+  include-sources ${options[@]+"${options[@]}"} \
     --output="${output_path}" "${input_path}"
   result_code="${?}"
 

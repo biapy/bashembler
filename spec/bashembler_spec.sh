@@ -137,17 +137,24 @@ Describe 'bashembler'
     Describe 'works'
 
         setup() {
-            output_file="$(mktemp -u)"
-            existing_output_file="$(mktemp)"
-
             sourced_file="$(mktemp || true)"
+    
+            # On MacOS /var is a symbolic link to /private/var.
+            if [[ -e "/private${sourced_file}" ]]; then
+                prefix="/private"
+                sourced_file="${prefix}${sourced_file}"
+            fi
+
+            output_file="${prefix}$(mktemp -u || true)"
+            existing_output_file="${prefix}$(mktemp || true)"
+
             [[ -e "${sourced_file}" ]] && cat - > "${sourced_file}" << EOF
 #!/bin/bash
 # Sourced file contents
 echo "The sourced file contents."
 EOF
 
-            origin_file="$(mktemp || true)"
+            origin_file="${prefix}$(mktemp || true)"
             [[ -e "${origin_file}" ]] && cat - > "${origin_file}" << EOF
 #!/bin/bash
 # Origin file contents
@@ -155,7 +162,7 @@ echo "The origin file contents."
 source "${sourced_file}"
 EOF
 
-            circular_sourcing_file="$(mktemp || true)"
+            circular_sourcing_file="${prefix}$(mktemp || true)"
             [[ -e "${circular_sourcing_file}" ]] \
                 && cat - > "${circular_sourcing_file}" << EOF
 #!/bin/bash
@@ -163,7 +170,7 @@ source "${circular_sourcing_file##*/}"
 echo "This file source itself infinitely."
 EOF
 
-            infinite_sourcing_file="$(mktemp || true)"
+            infinite_sourcing_file="${prefix}$(mktemp || true)"
             [[ -e "${infinite_sourcing_file}" ]] \
                 && cat - > "${infinite_sourcing_file}" << EOF
 #!/bin/bash
@@ -171,7 +178,7 @@ echo "The infinite sourcing file contents."
 source "${circular_sourcing_file}"
 EOF
 
-            source_missing_file="$(mktemp || true)"
+            source_missing_file="${prefix}$(mktemp || true)"
             missing_target_file="missing-random-file-${source_missing_file##*/}"
             [[ -e "${source_missing_file}" ]] \
                 && cat - > "${source_missing_file}" << EOF
@@ -180,7 +187,7 @@ source "${missing_target_file}"
 echo "This file source a missing file."
 EOF
 
-            broken_sourcing_file="$(mktemp || true)"
+            broken_sourcing_file="${prefix}$(mktemp || true)"
             [[ -e "${broken_sourcing_file}" ]] && cat - > "${broken_sourcing_file}" << EOF
 #!/bin/bash
 echo "The broken script sourcing file contents."
