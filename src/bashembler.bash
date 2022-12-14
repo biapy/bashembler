@@ -50,7 +50,7 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 # @option -w | --overwrite Overwrite output path if it is an existing file.
 # @option -o <output-path> | --output=<output-path> Write output to given path.
 #
-# @arg $1 string A `bash`` (or `sh`) script file.
+# @arg $1 string A `bash` (or `sh`) script file.
 #
 # @stdout The one-file version of the $1 script, with sourced files included.
 # @stderr Error if argument is missing, or more than one argument provided.

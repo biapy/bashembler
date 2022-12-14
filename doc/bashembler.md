@@ -62,7 +62,7 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
 #### Arguments
 
-* **$1** (string): A `bash`` (or `sh`) script file.
+* **$1** (string): A `bash` (or `sh`) script file.
 
 #### Exit codes
 
