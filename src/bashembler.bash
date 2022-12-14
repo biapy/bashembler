@@ -122,10 +122,7 @@ function bashembler() {
     [[ "${verbose_fd-2}" -ne 2 ]] && eval "exec ${verbose_fd-}>&-"
   }
 
-  # @description
-  #   Bashembler usage.
-  #
-  # @stdout Bashembler usage information.
+  # Bashembler usage.
   function usage() {
     cat << 'EOF'
 Bashembler v${version}

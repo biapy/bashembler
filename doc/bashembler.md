@@ -14,7 +14,6 @@ Partially inspired by:
 ## Index
 
 * [bashembler](#bashembler)
-* [usage](#usage)
 
 ### bashembler
 
@@ -88,12 +87,3 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 * [in-list](https://github.com/biapy/biapy-bashlings/blob/main/doc/in-list.md)
 * [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
 * [include-sources](./internals/include-sources.md#include-sources)
-
-### usage
-
-Bashembler usage.
-
-#### Output on stdout
-
-* Bashembler usage information.
-
