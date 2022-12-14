@@ -30,7 +30,7 @@ jobs:
       - name: Install shellspec
         run: /home/linuxbrew/.linuxbrew/bin/brew tap 'shellspec/shellspec' && /home/linuxbrew/.linuxbrew/bin/brew install 'shellspec'
       - name: Tests & Coverage
-        run: PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}" sudo --user='runner' --preserve-env='PATH' make coverage
+        run: sudo --user='runner' bash -c 'PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}" make coverage'
       # - name: Codecov.io
       #   uses: codecov/codecov-action@v3
       #   with:
