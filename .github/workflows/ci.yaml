@@ -1,0 +1,40 @@
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: 'macos-latest'
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - name: Install shellspec
+        uses: lyricwulf/abc@v1
+        with: 
+          macos: shellspec
+      - name: Tests
+        run: sudo --user='runner' make test  
+  coverage:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - name: Setup shellspec
+        run: sudo apt-get update && sudo apt-get install -y 'shellspec' 'kcov'
+      - name: Tests & Coverage
+        run: sudo --user='runner' --preserve-env='PATH' make coverage
+      # - name: Codecov.io
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: ./coverage/codecov-result.json
+      #     flags: unittests
+      #     name: bashembler
+      #     fail_ci_if_error: false
+      #     verbose: false # optional (default = false)
