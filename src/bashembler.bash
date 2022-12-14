@@ -10,7 +10,7 @@
 #     Partially inspired by:
 #     [Replacing 'source file' with its content, and expanding variables, in bash](https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash)
 
-version="1.0.0alpha1"
+version="1.0.0"
 
 # Test if file is sourced.
 if ! (return 0 2> '/dev/null'); then
@@ -48,7 +48,7 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 # @option -v | --verbose Enable verbose mode.
 # @option -c | --discard-comments Remove comment lines from assembled file.
 # @option -w | --overwrite Overwrite output path if it is an existing file.
-# @option -o<output-path> | --output=<output-path> Write output to given path.
+# @option -o <output-path> | --output=<output-path> Write output to given path.
 #
 # @arg $1 string A `bash`` (or `sh`) script file.
 #
@@ -111,7 +111,7 @@ function bashembler() {
     fd_target='/dev/null'
     ((verbose)) && fd_target='&2'
     eval "exec ${verbose_fd}>${fd_target}"
-    cecho "DEBUG" "Debug: Verbose mode enabled." >&"${verbose_fd-2}"
+    cecho "DEBUG" "Debug: Verbose mode enabled in ${FUNCNAME[0]}." >&"${verbose_fd-2}"
   else
     verbose_fd=2
   fi
@@ -130,27 +130,29 @@ function bashembler() {
   function usage() {
     cat << 'EOF'
 Bashembler v${version}
+Homepage: https://github.com/biapy/bashembler
 
-bashembler assembles shell scripts splitted accross multiple files into a
-one-file script, ready for deployment.
+bashembler assembles shell scripts splitted across multiple files into a
+one-file script, ready for deployment. By default, bashembler output assembled
+script on /dev/stdout. Use --output option to write assembled script to file.
 
 Usage:
 
-  bashembler --output=<final-script.bash> <splitted-script.bash>
+  bashembler [ -h | -? | --help ] [ -V | --version ] [ -q | --quiet ]
+    [ -v | --verbose ] [ -c | --discard-comments ] [ -w | --overwrite]
+    [ --o <final-script.bash> | --output=<final-script.bash> ]
+    <splitted-script.bash>
 
--c | --discard-comments Remove comment lines from assembled file.
-# @arg $1 string A `bash`` (or `sh`) script file.
-#
-# @stdout The one-file version of the $1 script, with sourced files included.
-# @stderr Error if argument is missing, or more than one argument provided.
-# @stderr Error if output path exist, and --overwrite option is missing.
-# @stderr Error if bashembler is unable to find a sourced file.
-#
-# @exitcode 0 If `bash`` script assembly is successful.
-# @exitcode 1 If bashembler failed to assemble the script.
-# @exitcode 1 If argument is missing, or more than one argument provided.
-# @exitcode 1 If bashembler is unable to find a sourced file.
+Where:
 
+  -h, -?, --help          Display usage information.
+  -V, --version           Display version.
+  -q, --quiet             Disable error message output.
+  -v, --verbose           Enable verbose mode.
+  -c, --discard-comments  Remove comment lines from assembled file.
+  -w, --overwrite         Overwrite output path if it is an existing file.
+  -o <output-path>, --output=<output-path>
+                          Write output to given path.
 
 EOF
   }
@@ -184,7 +186,7 @@ EOF
             output_path="${2-}"
             shift
         else
-          cecho 'ERROR' "Error: --file requires an non-empty option argument." >&"${error_fd-2}"
+          cecho 'ERROR' "Error: --output requires an non-empty option argument." >&"${error_fd-2}"
           close-fds
           return 1
         fi
@@ -195,7 +197,7 @@ EOF
         ;;
       '--output=')
         # Handle the case of an empty --file=
-        cecho 'ERROR' "Error: --file requires an non-empty option argument." >&"${error_fd-2}"
+        cecho 'ERROR' "Error: --output requires an non-empty option argument." >&"${error_fd-2}"
         close-fds
         return 1
         ;;
@@ -211,7 +213,7 @@ EOF
       *)
         # Default case: No more options, so break out of the loop.
         break
-              ;;
+        ;;
     esac
 
     shift

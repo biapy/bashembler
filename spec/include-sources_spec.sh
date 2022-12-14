@@ -150,12 +150,14 @@ Describe 'include-sources'
             sourced_file="$(mktemp || true)"
             [[ -e "${sourced_file}" ]] && cat - > "${sourced_file}" << EOF
 #!/bin/bash
+# Sourced file contents
 echo "The sourced file contents."
 EOF
 
             origin_file="$(mktemp || true)"
             [[ -e "${origin_file}" ]] && cat - > "${origin_file}" << EOF
 #!/bin/bash
+# Origin file contents
 echo "The origin file contents."
 source "${sourced_file}"
 EOF
@@ -221,8 +223,10 @@ EOF
             When call include-sources "${origin_file}"
             The status should be success
             The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The origin file contents."'
-            The line 3 of output should equal 'echo "The sourced file contents."'
+            The line 2 of output should equal '# Origin file contents'
+            The line 3 of output should equal 'echo "The origin file contents."'
+            The line 4 of output should equal '# Sourced file contents'
+            The line 5 of output should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
             The line 2 of error should equal " | ${sourced_file##*/}"
         End
@@ -231,8 +235,10 @@ EOF
             When call include-sources --quiet "${origin_file}"
             The status should be success
             The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The origin file contents."'
-            The line 3 of output should equal 'echo "The sourced file contents."'
+            The line 2 of output should equal '# Origin file contents'
+            The line 3 of output should equal 'echo "The origin file contents."'
+            The line 4 of output should equal '# Sourced file contents'
+            The line 5 of output should equal 'echo "The sourced file contents."'
             The error should equal ""
         End
 
@@ -243,12 +249,24 @@ EOF
             The output should equal ""
             The file output-file should be exist
             The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 3 of file output-file contents should equal 'echo "The sourced file contents."'
+            The line 2 of file output-file contents should equal '# Origin file contents'
+            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
+            The line 4 of file output-file contents should equal '# Sourced file contents'
+            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
             The line 2 of error should equal " | ${sourced_file##*/}"
         End
 
+        It "discard comments."
+            When call include-sources --discard-comments "${origin_file}"
+            The status should be success
+            The line 1 of output should equal "#!/bin/bash"
+            The line 2 of output should equal 'echo "The origin file contents."'
+            The line 3 of output should equal 'echo "The sourced file contents."'
+            The line 1 of error should equal "Assembling ${origin_file}"
+            The line 2 of error should equal " | ${sourced_file##*/}"
+        End
+    
         It "ignore circular sourcing."
             When call include-sources "${infinite_sourcing_file}"
             The status should be success

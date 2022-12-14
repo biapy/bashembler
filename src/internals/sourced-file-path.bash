@@ -91,7 +91,7 @@ function sourced-file-path {
     fd_target='/dev/null'
     ((verbose)) && fd_target='&2'
     eval "exec ${verbose_fd}>${fd_target}"
-    cecho "DEBUG" "Debug: Verbose mode enabled." >&"${verbose_fd-2}"
+    cecho "DEBUG" "Debug: Verbose mode enabled in ${FUNCNAME[0]}." >&"${verbose_fd-2}"
   else
     verbose_fd=2
   fi

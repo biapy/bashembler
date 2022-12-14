@@ -33,6 +33,10 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
 #### Options
 
+* **-h** | **-?** | **--help**
+
+  Display usage information.
+
 * **-V** | **--version**
 
   Display version.
@@ -45,15 +49,17 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
   Enable verbose mode.
 
+* **-c** | **--discard-comments**
+
+  Remove comment lines from assembled file.
+
 * **-w** | **--overwrite**
 
   Overwrite output path if it is an existing file.
 
-* **-o\<output-path\>** | **--output=\<output-path\>**
+* **-o \<output-path\>** | **--output=\<output-path\>**
 
   Write output to given path.
-
-* -h | -? | --help Display usage information.
 
 #### Arguments
 

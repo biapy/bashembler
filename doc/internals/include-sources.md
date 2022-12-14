@@ -41,6 +41,10 @@ $contents="$( include-sources --origin="src/my-script.bash" "src/my-script.bash"
 
   Trigger verbose mode when present.
 
+* **--discard-comments**
+
+  Remove comment lines (eg, starting by '#') from assembled file.
+
 * **--level=\<level\>**
 
   The distance from origin shell script (0 for origin).
