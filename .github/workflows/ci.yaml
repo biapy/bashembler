@@ -25,6 +25,10 @@ jobs:
           submodules: 'true'
       - name: Install kcov
         run: sudo apt-get update && sudo apt-get install -y 'kcov'
+      - name: Install homebrew
+        run: NONINTERACTIVE=1 bash -c "$(command curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh')"
+      - name: Load brew environment
+        run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       - name: Install shellspec
         run: brew tap 'shellspec/shellspec' && brew install 'shellspec'
       - name: Tests & Coverage

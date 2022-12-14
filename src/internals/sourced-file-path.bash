@@ -127,8 +127,7 @@ function sourced-file-path {
   cecho 'DEBUG' "Debug: Extracting file path from source command '${source_command-}'." >&"${verbose_fd-2}"
   # shellcheck disable=SC1003
   file="$(echo "${source_command-}" \
-    | sed --regexp-extended \
-        --expression='s#^[[:blank:]]*(source|\.)[[:blank:]]+("((\\"|[^"])*)"|'\''((\\'\''|[^'\''])*)'\''|((\\[ \t]|[^ \t])*))?[[:blank:]]*(;.*|\#.*)?$#\3\5\7#' \
+    | sed -Ee 's#^[[:blank:]]*(source|\.)[[:blank:]]+("((\\"|[^"])*)"|'\''((\\'\''|[^'\''])*)'\''|((\\[ \t]|[^ \t])*))?[[:blank:]]*(;.*|\#.*)?$#\3\5\7#' \
         || true)"
   cecho 'DEBUG' "Debug: Detected file path '${file-}'." >&"${verbose_fd-2}"
 
