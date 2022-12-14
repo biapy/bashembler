@@ -174,7 +174,7 @@ EOF
       '-q' | '--quiet')
         quiet=1
         ;;
-      '-c' | '--discard-comments' )
+      '-c' | '--discard-comments')
         discard_comments=1
         ;;
       '-w' | '--overwrite')

@@ -242,6 +242,18 @@ EOF
             The error should equal ""
         End
 
+        It "accepts '-' as output path."
+            When call include-sources --output=- "${origin_file}"
+            The status should be success
+            The line 1 of output should equal "#!/bin/bash"
+            The line 2 of output should equal '# Origin file contents'
+            The line 3 of output should equal 'echo "The origin file contents."'
+            The line 4 of output should equal '# Sourced file contents'
+            The line 5 of output should equal 'echo "The sourced file contents."'
+            The line 1 of error should equal "Assembling ${origin_file}"
+            The line 2 of error should equal " | ${sourced_file##*/}"
+        End
+
         It "includes sourced file into output and write output to file."
             Path output-file="${output_file}"
             When call include-sources --output="${output_file}" "${origin_file}"
