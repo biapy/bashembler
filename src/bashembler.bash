@@ -62,11 +62,10 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 # @exitcode 1 If argument is missing, or more than one argument provided.
 # @exitcode 1 If bashembler is unable to find a sourced file.
 #
-# @see cecho
-# @see realpath
-# @see process-options
-# @see sourced-file-path
-# @see include-sources
+# @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+# @see [in-list](https://github.com/biapy/biapy-bashlings/blob/main/doc/in-list.md)
+# @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+# @see [include-sources](./internals/include-sources.md#include-sources)
 function bashembler() {
   local quiet=0
   local verbose=0

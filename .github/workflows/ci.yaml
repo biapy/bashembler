@@ -28,7 +28,7 @@ jobs:
       - name: Install homebrew
         run: NONINTERACTIVE=1 bash -c "$(command curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh')"
       - name: Load brew environment
-        run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        run: echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "${HOME}/.profile"
       - name: Install shellspec
         run: brew tap 'shellspec/shellspec' && brew install 'shellspec'
       - name: Tests & Coverage

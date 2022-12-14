@@ -43,10 +43,11 @@ source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 # @exitcode 1 If argument is missing, or more than one argument provided.
 # @exitcode 1 If include-sources is unable to find a sourced file.
 #
-# @see cecho
-# @see realpath
-# @see process-options
-# @see sourced-file-path
+# @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+# @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+# @see [repeat-string](https://github.com/biapy/biapy-bashlings/blob/main/doc/repeat-string.md)
+# @see [process-options](https://github.com/biapy/biapy-bashlings/blob/main/doc/process-options.md)
+# @see [sourced-file-path](./sourced-file-path.md#sourced-file-path)
 function include-sources() {
   local allowed_options
   # Declare option variables as local.

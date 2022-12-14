@@ -67,3 +67,10 @@ sourced_file="$(
 * Error if source command can't be parsed.
 * Error if sourced file does not exists.
 
+#### See also
+
+* [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+* [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+* [process-options](https://github.com/biapy/biapy-bashlings/blob/main/doc/process-options.md)
+* [include-sources](./include-sources.md#include-sources)
+

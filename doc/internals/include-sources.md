@@ -81,8 +81,9 @@ $contents="$( include-sources --origin="src/my-script.bash" "src/my-script.bash"
 #### See also
 
 * [https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash](https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash)
-* [cecho](#cecho)
-* [realpath](#realpath)
-* [process-options](#process-options)
-* [sourced-file-path](#sourced-file-path)
+* [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+* [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+* [repeat-string](https://github.com/biapy/biapy-bashlings/blob/main/doc/repeat-string.md)
+* [process-options](https://github.com/biapy/biapy-bashlings/blob/main/doc/process-options.md)
+* [sourced-file-path](./sourced-file-path.md#sourced-file-path)
 

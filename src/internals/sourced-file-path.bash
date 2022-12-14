@@ -5,7 +5,6 @@
 # @description
 #   `sourced-file-path` is a sub-function of `assemble-sources` that compute
 #   a source command sourced file path.
-# @see assemble-sources
 
 # shellcheck source-path=SCRIPTDIR
 source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/cecho.bash"
@@ -44,6 +43,11 @@ source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/process-options.bash"
 # @exitcode 1 if argument is missing or too many arguments given.
 # @exitcode 1 if source command can't be parsed.
 # @exitcode 1 if sourced file does not exists.
+#
+# @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+# @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+# @see [process-options](https://github.com/biapy/biapy-bashlings/blob/main/doc/process-options.md)
+# @see [include-sources](./include-sources.md#include-sources)
 function sourced-file-path {
   # Declare variables as local.
   local allowed_options

@@ -84,11 +84,10 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
 #### See also
 
-* [cecho](#cecho)
-* [realpath](#realpath)
-* [process-options](#process-options)
-* [sourced-file-path](#sourced-file-path)
-* [include-sources](#include-sources)
+* [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
+* [in-list](https://github.com/biapy/biapy-bashlings/blob/main/doc/in-list.md)
+* [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
+* [include-sources](./internals/include-sources.md#include-sources)
 
 ### usage
 
