@@ -15,7 +15,7 @@ COVERAGE_PATH := ./coverage
 
 # Define utilities pathes.
 SHDOC := ./lib/shdoc/shdoc
-SHELLSPEC := bash "$(shell type -p shellspec)"
+SHELLSPEC := bash "$(shell bash -c 'command -v shellspec')"
 RM := rm -f
 SHELLCHECK_BASH := shellcheck \
 	--check-sourced \
