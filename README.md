@@ -2,6 +2,7 @@
 
 [![linting](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml)
 [![tests](https://github.com/biapy/bashembler/actions/workflows/ci.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/ci.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/biapy/bashembler/badge.svg?branch=main)](https://coveralls.io/github/biapy/bashembler?branch=main)
 
 Bashembler -- contraction for bash-assembler -- aims to ease shell sccript
 development by providing a way to split lenghty scripts in multiple files
@@ -26,15 +27,12 @@ bashembler --output='bin/script-for-deployment' 'script.sh'
 
 Bashembler makes use of:
 
-- **[Biapy bashlings](https://github.com/biapy/biapy-bashlings).
-- **[shdoc](https://github.com/reconquest/shdoc)** for generating markdown
+- [Biapy bashlings](https://github.com/biapy/biapy-bashlings).
+- [shdoc](https://github.com/reconquest/shdoc) for generating markdown
   documentation from code.
-- [ShellCheck][shellcheck] for checking code
-  quality.
-- [shfmt][shfmt] for formating scripts and bats unit
-  tests.
-- **[ShellSpec][shellspec]**
-  for unit testing.
+- [ShellCheck][shellcheck] for checking code quality.
+- [shfmt][shfmt] for formating scripts and bats unit tests.
+- [ShellSpec][shellspec] for unit testing.
 
 ## Contributing
 

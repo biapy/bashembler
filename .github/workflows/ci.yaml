@@ -33,12 +33,5 @@ jobs:
         run: brew tap 'shellspec/shellspec' && brew install 'shellspec'
       - name: Tests & Coverage
         run: sudo --user='runner' --preserve-env='PATH' bash -c 'make coverage'
-      # - name: Codecov.io
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: ./coverage/codecov-result.json
-      #     flags: unittests
-      #     name: bashembler
-      #     fail_ci_if_error: false
-      #     verbose: false # optional (default = false)
+      - name: coveralls.io
+        run: sudo --user='runner' kcov --coveralls-id=${{ secrets.COVERALLS_TOKEN }} --report-only 'coverage/' 'src/bashembler.bash'
