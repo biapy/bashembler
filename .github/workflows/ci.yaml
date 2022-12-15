@@ -27,10 +27,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y 'kcov'
       - name: Install homebrew
         run: NONINTERACTIVE=1 bash -c "$(command curl -fsSL 'https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh')"
+      - name: Add homebrew to PATH
+        run: echo "/home/linuxbrew/.linuxbrew/sbin" >> $GITHUB_PATH && echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
       - name: Install shellspec
-        run: /home/linuxbrew/.linuxbrew/bin/brew tap 'shellspec/shellspec' && /home/linuxbrew/.linuxbrew/bin/brew install 'shellspec'
+        run: brew tap 'shellspec/shellspec' && brew install 'shellspec'
       - name: Tests & Coverage
-        run: PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}" sudo --user='runner' --preserve-env='PATH' bash -c 'make coverage'
+        run: sudo --user='runner' --preserve-env='PATH' bash -c 'make coverage'
       # - name: Codecov.io
       #   uses: codecov/codecov-action@v3
       #   with:
