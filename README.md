@@ -1,5 +1,8 @@
 # Bashembler
 
+[![linting](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml)
+[![tests](https://github.com/biapy/bashembler/actions/workflows/ci.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/ci.yaml)
+
 Bashembler -- contraction for bash-assembler -- aims to ease shell sccript
 development by providing a way to split lenghty scripts in multiple files
 included by `source` or `.` (dot) instructions, and assembling these files
