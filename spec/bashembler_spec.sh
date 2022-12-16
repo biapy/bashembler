@@ -8,11 +8,11 @@ Describe 'bashembler'
     Include 'src/bashembler.bash'
 
     Describe 'expected failule'
-        setup() {
+        function setup() {
             output_file="$(mktemp)"
         }
 
-        cleanup() {
+        function cleanup() {
             [[ -e "${output_file}" ]] && rm "${output_file}"
 
             return 0
@@ -146,7 +146,7 @@ Describe 'bashembler'
             fi
 
             output_file="${prefix}$(mktemp -u || true)"
-            existing_output_file="${prefix}$(mktemp || true)"
+            existing_output_file="${prefix}$(mktemp)"
 
             [[ -e "${sourced_file}" ]] && cat - > "${sourced_file}" << EOF
 #!/bin/bash

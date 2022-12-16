@@ -2,5 +2,5 @@
 MinLineCount: 10
 
 # files/patterns to exclude
-IgnorePatterns:
-  - spec\**
+# IgnorePatterns:
+#   - spec\**

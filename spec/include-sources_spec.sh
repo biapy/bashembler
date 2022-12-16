@@ -145,73 +145,12 @@ Describe 'include-sources'
     Describe 'works'
 
         setup() {
-            sourced_file="$(mktemp || true)"
-    
-            # On MacOS /var is a symbolic link to /private/var.
-            if [[ -e "/private${sourced_file}" ]]; then
-                prefix="/private"
-                sourced_file="${prefix}${sourced_file}"
-            fi
-
-            output_file="${prefix}$(mktemp -u || true)"
-
-            [[ -e "${sourced_file}" ]] && cat - > "${sourced_file}" << EOF
-#!/bin/bash
-# Sourced file contents
-echo "The sourced file contents."
-EOF
-
-            origin_file="${prefix}$(mktemp || true)"
-            [[ -e "${origin_file}" ]] && cat - > "${origin_file}" << EOF
-#!/bin/bash
-# Origin file contents
-echo "The origin file contents."
-source "${sourced_file}"
-EOF
-
-            circular_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${circular_sourcing_file}" ]] \
-                && cat - > "${circular_sourcing_file}" << EOF
-#!/bin/bash
-source "${circular_sourcing_file##*/}"
-echo "This file source itself infinitely."
-EOF
-
-            infinite_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${infinite_sourcing_file}" ]] \
-                && cat - > "${infinite_sourcing_file}" << EOF
-#!/bin/bash
-echo "The infinite sourcing file contents."
-source "${circular_sourcing_file}"
-EOF
-
-            source_missing_file="${prefix}$(mktemp || true)"
-            missing_target_file="missing-random-file-${source_missing_file##*/}"
-            [[ -e "${source_missing_file}" ]] \
-                && cat - > "${source_missing_file}" << EOF
-#!/bin/bash
-source "${missing_target_file}"
-echo "This file source a missing file."
-EOF
-
-            broken_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${broken_sourcing_file}" ]] && cat - > "${broken_sourcing_file}" << EOF
-#!/bin/bash
-echo "The broken script sourcing file contents."
-source "${source_missing_file}"
-EOF
-
+            setup-sourcing-tests
             return 0
         }
 
         cleanup() {
-            [[ -e "${sourced_file}" ]] && rm "${sourced_file}"
-            [[ -e "${origin_file}" ]] && rm "${origin_file}"
-            [[ -e "${circular_sourcing_file}" ]] && rm "${circular_sourcing_file}"
-            [[ -e "${infinite_sourcing_file}" ]] && rm "${infinite_sourcing_file}"
-            [[ -e "${source_missing_file}" ]] && rm "${source_missing_file}"
-            [[ -e "${broken_sourcing_file}" ]] && rm "${broken_sourcing_file}"
-
+            cleanup-sourcing-tests
             return 0
         }
 
@@ -219,7 +158,7 @@ EOF
         AfterAll 'cleanup'
 
         reset-output() {
-            [[ -e "${output_file}" ]] && rm "${output_file}"
+            [[ -e "${output_file-}" ]] && rm "${output_file-}"
 
             return 0
         }
