@@ -74,27 +74,13 @@ Describe 'bashembler & include-sources'
             The line 2 of error should equal " | ${sourced_file##*/}"
         End
 
-        It "${1} includes sourced file into output and write output to file."
+        It "${1} discard comments and write output to file."
             Path output-file="${output_file}"
-            When call "${1}" --output="${output_file}" "${origin_file}"
+            When call "${1}" --discard-comments --output="${output_file}" "${origin_file}"
             The status should be success
-            The output should equal ""
-            The file output-file should be exist
             The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-        It "${1} discard comments."
-            When call "${1}" --discard-comments "${origin_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The origin file contents."'
-            The line 3 of output should equal 'echo "The sourced file contents."'
+            The line 2 of file output-file contents should equal 'echo "The origin file contents."'
+            The line 3 of file output-file contents should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
             The line 2 of error should equal " | ${sourced_file##*/}"
         End
