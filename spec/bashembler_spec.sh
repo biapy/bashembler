@@ -237,36 +237,20 @@ Describe 'bashembler'
             The error should equal ""
         End
 
-        Describe "allows to specify output file using"
-            Parameters:matrix
-                '--output=' '--output ' '-o '
+        Describe "allows to write to output file using"
+            Parameters:block
+                "${output_file}" '-o option' -o "${output_file}"
+                "${output_file}" '--output option' --output "${output_file}"
+                "${output_file}" '--output= option' --output="${output_file}"
+                "${existing_output_file}" '-w to overwrite existing file' -w --output="${existing_output_file}"
+                "${existing_output_file}" '--overwrite to overwrite existing file' --overwrite --output="${existing_output_file}"
             End
 
-            Example "${1}."
-                Path output-file="${output_file}"
+            Example "${2-}"
+                Path output-file="${1-}"
+                shift 2
                 # shellcheck disable=SC2086 # Word splitting is needed.
-                When call bashembler ${1}"${output_file}" "${origin_file}"
-                The status should be success
-                The output should equal ""
-                The file output-file should be exist
-                The line 1 of file output-file contents should equal "#!/bin/bash"
-                The line 2 of file output-file contents should equal '# Origin file contents'
-                The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-                The line 4 of file output-file contents should equal '# Sourced file contents'
-                The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-                The line 1 of error should equal "Assembling ${origin_file}"
-                The line 2 of error should equal " | ${sourced_file##*/}"
-            End
-        End
-    
-        Describe 'overwrite output file when'
-            Parameters:matrix
-                '--overwrite' '-w'
-            End
-
-            Example "${1} is given."
-                Path output-file="${existing_output_file}"
-                When call bashembler "${1}" --output="${existing_output_file}" "${origin_file}"
+                When call bashembler ${@+"${@}"} "${origin_file}"
                 The status should be success
                 The output should equal ""
                 The file output-file should be exist
