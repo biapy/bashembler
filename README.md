@@ -2,6 +2,7 @@
 
 [![linting](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml)
 [![tests](https://github.com/biapy/bashembler/actions/workflows/ci.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/biapy/bashembler/branch/main/graph/badge.svg?token=5XJ8H7BMG1)](https://codecov.io/gh/biapy/bashembler)
 [![CodeFactor](https://www.codefactor.io/repository/github/biapy/bashembler/badge)](https://www.codefactor.io/repository/github/biapy/bashembler)
 
 Bashembler -- contraction for bash-assembler -- aims to ease shell sccript
