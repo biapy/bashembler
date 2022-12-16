@@ -249,7 +249,6 @@ Describe 'bashembler'
             Example "${2-}"
                 Path output-file="${1-}"
                 shift 2
-                # shellcheck disable=SC2086 # Word splitting is needed.
                 When call bashembler ${@+"${@}"} "${origin_file}"
                 The status should be success
                 The output should equal ""
