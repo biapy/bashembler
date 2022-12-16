@@ -2,7 +2,7 @@
 
 [![linting](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/super-linter.yaml)
 [![tests](https://github.com/biapy/bashembler/actions/workflows/ci.yaml/badge.svg)](https://github.com/biapy/bashembler/actions/workflows/ci.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/biapy/bashembler/badge.svg?branch=main)](https://coveralls.io/github/biapy/bashembler?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/biapy/bashembler/badge)](https://www.codefactor.io/repository/github/biapy/bashembler)
 
 Bashembler -- contraction for bash-assembler -- aims to ease shell sccript
 development by providing a way to split lenghty scripts in multiple files
