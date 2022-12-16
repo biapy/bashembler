@@ -37,7 +37,6 @@ Describe 'bashembler & include-sources'
         End
 
         It "${1} includes sourced file into output."
-
             # shellcheck disable=SC2154
             When call "${1}" "${origin_file}"
             The status should be success
