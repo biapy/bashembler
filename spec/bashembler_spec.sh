@@ -7,19 +7,21 @@ Describe 'bashembler'
     Set 'errexit:on' 'pipefail:on' 'nounset:on'
     Include 'src/bashembler.bash'
 
-    Describe 'expected failule'
-        function setup() {
+    Describe 'is expected to fail: It'
+
+        function setup-failure-tests() {
             output_file="$(mktemp)"
+            export output_file
         }
 
-        function cleanup() {
+        function cleanup-failure-tests() {
             [[ -e "${output_file}" ]] && rm "${output_file}"
 
             return 0
         }
 
-        BeforeAll 'setup'
-        AfterAll 'cleanup'
+        BeforeAll 'setup-failure-tests'
+        AfterAll 'cleanup-failure-tests'
 
         It "fails when no argument is given"
             When call bashembler
@@ -134,86 +136,24 @@ Describe 'bashembler'
         End
     End
 
-    Describe 'works'
+    Describe 'is expected to succeed: It'
 
-        setup() {
-            sourced_file="$(mktemp || true)"
-    
-            # On MacOS /var is a symbolic link to /private/var.
-            if [[ -e "/private${sourced_file}" ]]; then
-                prefix="/private"
-                sourced_file="${prefix}${sourced_file}"
-            fi
-
-            output_file="${prefix}$(mktemp -u || true)"
-            existing_output_file="${prefix}$(mktemp)"
-
-            [[ -e "${sourced_file}" ]] && cat - > "${sourced_file}" << EOF
-#!/bin/bash
-# Sourced file contents
-echo "The sourced file contents."
-EOF
-
-            origin_file="${prefix}$(mktemp || true)"
-            [[ -e "${origin_file}" ]] && cat - > "${origin_file}" << EOF
-#!/bin/bash
-# Origin file contents
-echo "The origin file contents."
-source "${sourced_file}"
-EOF
-
-            circular_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${circular_sourcing_file}" ]] \
-                && cat - > "${circular_sourcing_file}" << EOF
-#!/bin/bash
-source "${circular_sourcing_file##*/}"
-echo "This file source itself infinitely."
-EOF
-
-            infinite_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${infinite_sourcing_file}" ]] \
-                && cat - > "${infinite_sourcing_file}" << EOF
-#!/bin/bash
-echo "The infinite sourcing file contents."
-source "${circular_sourcing_file}"
-EOF
-
-            source_missing_file="${prefix}$(mktemp || true)"
-            missing_target_file="missing-random-file-${source_missing_file##*/}"
-            [[ -e "${source_missing_file}" ]] \
-                && cat - > "${source_missing_file}" << EOF
-#!/bin/bash
-source "${missing_target_file}"
-echo "This file source a missing file."
-EOF
-
-            broken_sourcing_file="${prefix}$(mktemp || true)"
-            [[ -e "${broken_sourcing_file}" ]] && cat - > "${broken_sourcing_file}" << EOF
-#!/bin/bash
-echo "The broken script sourcing file contents."
-source "${source_missing_file}"
-EOF
-
+        setup-working-tests() {
+            setup-sourcing-tests
             return 0
         }
 
-        cleanup() {
-            [[ -e "${existing_output_file}" ]] && rm "${existing_output_file}"
-            [[ -e "${sourced_file}" ]] && rm "${sourced_file}"
-            [[ -e "${origin_file}" ]] && rm "${origin_file}"
-            [[ -e "${circular_sourcing_file}" ]] && rm "${circular_sourcing_file}"
-            [[ -e "${infinite_sourcing_file}" ]] && rm "${infinite_sourcing_file}"
-            [[ -e "${source_missing_file}" ]] && rm "${source_missing_file}"
-            [[ -e "${broken_sourcing_file}" ]] && rm "${broken_sourcing_file}"
-
+        cleanup-working-tests() {
+            cleanup-sourcing-tests
             return 0
         }
 
-        BeforeAll 'setup'
-        AfterAll 'cleanup'
+        BeforeAll 'setup-working-tests'
+        AfterAll 'cleanup-working-tests'
 
         reset-output() {
             [[ -e "${output_file}" ]] && rm "${output_file}"
+            # shellcheck disable=SC2154
             [[ -e "${existing_output_file}" ]] && echo "" > "${existing_output_file}"
 
             return 0
@@ -221,53 +161,44 @@ EOF
 
         AfterEach 'reset-output'
 
-        It "display version when -V is given."
-            When call bashembler -V
-            The status should be success
-            The output should start with "Bashembler v"
-            The error should equal ""
+        Describe "display version when"
+            Parameters:matrix
+                '--version' '-V'
+            End
+
+            Example "${1} is given."
+                When call bashembler "${1}"
+                The status should be success
+                The output should start with "Bashembler v"
+                The error should equal ""
+            End
         End
 
-        It "display version when --version is given."
-            When call bashembler --version
-            The status should be success
-            The output should start with "Bashembler v"
-            The error should equal ""
+        Describe "display usage when"
+            Parameters:matrix
+                '--help' '-h' '-?'
+            End
+
+            Example "${1} is given."
+                When call bashembler "${1}"
+                The status should be success
+                The line 4 of output should equal "bashembler assembles shell scripts splitted across multiple files into a"
+                The error should equal ""
+            End
         End
 
-        It "display usage when -h is given."
-            When call bashembler -h
-            The status should be success
-            The line 4 of output should equal "bashembler assembles shell scripts splitted across multiple files into a"
-            The error should equal ""
-        End
+        Describe "display debug information when"
+            Parameters:matrix
+                '--verbose' '-v'
+            End
 
-        It "display usage when -? is given."
-            When call bashembler -?
-            The status should be success
-            The line 4 of output should equal "bashembler assembles shell scripts splitted across multiple files into a"
-            The error should equal ""
-        End
-
-        It "display usage when --help is given."
-            When call bashembler --help
-            The status should be success
-            The line 4 of output should equal "bashembler assembles shell scripts splitted across multiple files into a"
-            The error should equal ""
-        End
-
-        It "display debug information when -v is given."
-            When call bashembler -v "${origin_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 1 of error should equal "Debug: Verbose mode enabled in bashembler."
-        End
-
-        It "display debug information when --verbose is given."
-            When call bashembler --verbose "${origin_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 1 of error should equal "Debug: Verbose mode enabled in bashembler."
+            Example "${1} is given."
+                # shellcheck disable=SC2154
+                When call bashembler "${1}" "${origin_file}"
+                The status should be success
+                The line 1 of output should equal "#!/bin/bash"
+                The line 1 of error should equal "Debug: Verbose mode enabled in bashembler."
+            End
         End
 
         It "includes sourced file into output."
@@ -279,6 +210,7 @@ EOF
             The line 4 of output should equal '# Sourced file contents'
             The line 5 of output should equal 'echo "The sourced file contents."'
             The line 1 of error should equal "Assembling ${origin_file}"
+            # shellcheck disable=SC2154
             The line 2 of error should equal " | ${sourced_file##*/}"
         End
 
@@ -305,122 +237,63 @@ EOF
             The error should equal ""
         End
 
-        It "allows to specify output file using -o."
-            Path output-file="${output_file}"
-            When call bashembler -o "${output_file}" "${origin_file}"
-            The status should be success
-            The output should equal ""
-            The file output-file should be exist
-            The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
+        Describe "allows to specify output file using"
+            Parameters:matrix
+                '--output=' '--output ' '-o '
+            End
 
-        It "allows to specify output file using --output."
-            Path output-file="${output_file}"
-            When call bashembler --output "${output_file}" "${origin_file}"
-            The status should be success
-            The output should equal ""
-            The file output-file should be exist
-            The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-        It "allows to specify output file using --output=."
-            Path output-file="${output_file}"
-            When call bashembler --output="${output_file}" "${origin_file}"
-            The status should be success
-            The output should equal ""
-            The file output-file should be exist
-            The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-
-        It "overwrite output file when -w is given."
-            Path output-file="${existing_output_file}"
-            When call bashembler -w --output="${existing_output_file}" "${origin_file}"
-            The status should be success
-            The output should equal ""
-            The file output-file should be exist
-            The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-        It "overwrite output file when --overwrite is given."
-            Path output-file="${existing_output_file}"
-            When call bashembler --overwrite --output="${existing_output_file}" "${origin_file}"
-            The status should be success
-            The output should equal ""
-            The file output-file should be exist
-            The line 1 of file output-file contents should equal "#!/bin/bash"
-            The line 2 of file output-file contents should equal '# Origin file contents'
-            The line 3 of file output-file contents should equal 'echo "The origin file contents."'
-            The line 4 of file output-file contents should equal '# Sourced file contents'
-            The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-        It "discard comments when --discard-comments is given."
-            When call bashembler --discard-comments "${origin_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The origin file contents."'
-            The line 3 of output should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
-        End
-
-        It "discard comments when -c is given."
-            When call bashembler -c "${origin_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The origin file contents."'
-            The line 3 of output should equal 'echo "The sourced file contents."'
-            The line 1 of error should equal "Assembling ${origin_file}"
-            The line 2 of error should equal " | ${sourced_file##*/}"
+            Example "${1}."
+                Path output-file="${output_file}"
+                # shellcheck disable=SC2086 # Word splitting is needed.
+                When call bashembler ${1}"${output_file}" "${origin_file}"
+                The status should be success
+                The output should equal ""
+                The file output-file should be exist
+                The line 1 of file output-file contents should equal "#!/bin/bash"
+                The line 2 of file output-file contents should equal '# Origin file contents'
+                The line 3 of file output-file contents should equal 'echo "The origin file contents."'
+                The line 4 of file output-file contents should equal '# Sourced file contents'
+                The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
+                The line 1 of error should equal "Assembling ${origin_file}"
+                The line 2 of error should equal " | ${sourced_file##*/}"
+            End
         End
     
-        It "ignore circular sourcing."
-            When call bashembler "${infinite_sourcing_file}"
-            The status should be success
-            The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The infinite sourcing file contents."'
-            The line 3 of output should equal 'echo "This file source itself infinitely."'
-            The line 1 of error should equal "Assembling ${infinite_sourcing_file}"
-            The line 2 of error should equal " | ${circular_sourcing_file##*/}"
-            The line 3 of error should equal " |  | ${circular_sourcing_file##*/} skipped."
+        Describe 'overwrite output file when'
+            Parameters:matrix
+                '--overwrite' '-w'
+            End
+
+            Example "${1} is given."
+                Path output-file="${existing_output_file}"
+                When call bashembler "${1}" --output="${existing_output_file}" "${origin_file}"
+                The status should be success
+                The output should equal ""
+                The file output-file should be exist
+                The line 1 of file output-file contents should equal "#!/bin/bash"
+                The line 2 of file output-file contents should equal '# Origin file contents'
+                The line 3 of file output-file contents should equal 'echo "The origin file contents."'
+                The line 4 of file output-file contents should equal '# Sourced file contents'
+                The line 5 of file output-file contents should equal 'echo "The sourced file contents."'
+                The line 1 of error should equal "Assembling ${origin_file}"
+                The line 2 of error should equal " | ${sourced_file##*/}"
+            End
         End
 
-        It "fails when a source is missing."
-            When call bashembler "${broken_sourcing_file}"
-            The status should be failure
-            The line 1 of output should equal "#!/bin/bash"
-            The line 2 of output should equal 'echo "The broken script sourcing file contents."'
-            The line 1 of error should equal "Assembling ${broken_sourcing_file}"
-            The line 2 of error should equal " | ${source_missing_file##*/}"
-            The line 3 of error should equal "Error: can not resolve command 'source \"${missing_target_file}\"' in file '${source_missing_file}'."
-            The line 4 of error should equal "Error: failed during assembly of file '${broken_sourcing_file}'."
+        Describe 'discard comments when '
+            Parameters:matrix
+                '--discard-comments' '-c'
+            End
+
+            Example "${1} is given."
+                When call bashembler "${1}" "${origin_file}"
+                The status should be success
+                The line 1 of output should equal "#!/bin/bash"
+                The line 2 of output should equal 'echo "The origin file contents."'
+                The line 3 of output should equal 'echo "The sourced file contents."'
+                The line 1 of error should equal "Assembling ${origin_file}"
+                The line 2 of error should equal " | ${sourced_file##*/}"
+            End
         End
     End
 End
