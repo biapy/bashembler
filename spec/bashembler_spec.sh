@@ -197,7 +197,7 @@ Describe 'bashembler'
                 When call bashembler "${1}" "${origin_file}"
                 The status should be success
                 The line 1 of output should equal "#!/bin/bash"
-                The line 1 of error should equal "Debug: Verbose mode enabled in bashembler."
+                The line 1 of error should equal "Debug: bashembler's verbose mode enabled."
             End
         End
 

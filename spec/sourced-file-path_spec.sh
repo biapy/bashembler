@@ -130,7 +130,7 @@ Describe 'sourced-file-path'
         When call sourced-file-path --verbose "source 'test.bash'"
         The status should be success
         The output should equal "test.bash"
-        The line 1 of error should equal "Debug: Verbose mode enabled in sourced-file-path."
+        The line 1 of error should equal "Debug: sourced-file-path's verbose mode enabled."
         The line 2 of error should equal "Debug: Extracting file path from source command 'source 'test.bash''."
         The line 3 of error should equal "Debug: Detected file path 'test.bash'."
         The line 4 of error should equal "Debug: Sourced file origin was not provided."
