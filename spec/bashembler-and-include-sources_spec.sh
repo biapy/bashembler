@@ -36,6 +36,22 @@ Describe 'bashembler & include-sources'
             'include-sources' 'bashembler'
         End
 
+        It "fails when output path is not writeable."
+            # shellcheck disable=SC2154 # readonly_output_path is assigned in spec_helper.sh
+            When call bashembler --output="${readonly_output_path-}/output.sh" 'src/bashembler.bash'
+            The status should be failure
+            The output should equal ""
+            The error should equal "Error: error while initializing '${readonly_output_path-}/output.sh'."
+        End
+
+        It "fails quietly when output path is not writeable."
+            # shellcheck disable=SC2154 # readonly_output_path is assigned in spec_helper.sh
+            When call bashembler --quiet --output="${readonly_output_path-}/output.sh" 'src/bashembler.bash'
+            The status should be failure
+            The output should equal ""
+            The error should equal ""
+        End
+
         It "${1} includes sourced file into output."
             # shellcheck disable=SC2154
             When call "${1}" "${origin_file}"

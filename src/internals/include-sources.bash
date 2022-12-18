@@ -151,7 +151,7 @@ function include-sources() {
 
   # Test if output file can be created in given path.
   cecho "DEBUG" "Debug: check if output file can be created in given path." >&"${verbose_fd-2}"
-  if [[ "${output-}" != "/dev/stdout" && ! -d "$(dirname "${output-}")" ]]; then
+  if [[ "${output-'/dev/stdout'}" != "/dev/stdout" && ! -d "$(dirname "${output-/dev/stdout}")" ]]; then
     cecho "ERROR" "Error: file '${output-}' directory does not exists." >&"${error_fd-2}"
     close-fds
     return 1
@@ -169,11 +169,17 @@ function include-sources() {
       return 1
     fi
 
-    cecho 'SUCCESS' "Assembling ${input-}" >&"${error_fd-2}"
-
     # Initialize output file
     cecho "DEBUG" "Debug: initialization of output file." >&"${verbose_fd-2}"
-    [[ "${output-}" != "/dev/stdout" ]] && echo -n "" > "${output-}"
+    if [[ "${output-'/dev/stdout'}" != "/dev/stdout" ]]; then
+      if ! (echo -n "" > "${output-'/dev/stdout'}") 2>&"${verbose_fd-2}"; then
+        cecho "ERROR" "Error: error while initializing '${output-}'." >&"${error_fd-2}"
+        close-fds
+        return 1
+      fi
+    fi
+
+    cecho 'SUCCESS' "Assembling ${input-}" >&"${error_fd-2}"
 
     # Declare sourced_files list for this function and its recursions.
     local sourced_files=()
@@ -217,7 +223,7 @@ function include-sources() {
     # If line is not a source command,
     if [[ -z "${source_command-}" ]]; then
       # Write line as is in output.
-      echo -E "${line-}" >> "${output-}"
+      echo -E "${line-}" >> "${output-'/dev/stdout'}"
       # Continue with next line.
       continue
     fi
@@ -284,7 +290,7 @@ function include-sources() {
         ${include_options[@]+"${include_options[@]}"} \
         --level=$((level + 1)) \
         --origin="${source_origin-}" \
-        --output="${output-}" \
+        --output="${output-'/dev/stdout'}" \
         "${sourced_file-}"; then
       if [[ -z "${origin-}" ]]; then
         cecho "ERROR" "Error: failed during assembly of file '${input-}'." >&"${error_fd-2}"
