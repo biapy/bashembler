@@ -1,0 +1,37 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v* tag (e.g. v1.0, v20.15.10).
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - name: Create release asset
+        run: |
+          make build-clean
+          make build
+      - name: Generate asset SHA256
+        id: sha256
+        run: |
+          echo "::set-output name=bashembler::$(shasum -a 256 bin/bashembler | cut -d' ' -f1)"
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          artifacts: "bin/bashembler"
+          body: |
+            ---
+            ### Assets
+            - Asset Url: https://github.com/biapy/bashembler/releases/download/${{ steps.commit.outputs.version }}/bashembler
+            - SHA Checksum: `${{ steps.sha256.outputs.bashembler }}`
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true

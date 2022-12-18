@@ -68,9 +68,10 @@ coverage-clean: # Remove coverage folder
 	@$(RM) -r '$(COVERAGE_PATH)'
 
 build-clean: # Remove built file.
-	@$(RM) 'bin/bashembler'
+	@test -e 'bin' && $(RM) -r 'bin'
 
 bin/bashembler: # Assemble bashembler script for release.
+	@mkdir -p 'bin'
 	bash 'src/bashembler.bash' --discard-comments --output='bin/bashembler' 'src/bashembler.bash'
 
 ###
