@@ -3,9 +3,6 @@ on:
   push:
     tags:
       - 'v*' # Push events to matching v* tag (e.g. v1.0, v20.15.10).
-env:
-  VERBOSE: 1
-  DEBUG: 0
 jobs:
   release:
     name: release
@@ -20,7 +17,7 @@ jobs:
       - name: Create release asset
         run: |
           make build-clean
-          make build
+          VERBOSE=1 make build
       - name: Generate asset SHA256
         id: sha256
         run: |
