@@ -12,6 +12,8 @@ SOURCE_PATH := ./src
 DOC_PATH := ./doc
 SPEC_PATH := ./spec
 COVERAGE_PATH := ./coverage
+RELEASE_PATH := ./bin
+RELEASE_FILE := bashembler
 
 # Define utilities pathes.
 SHDOC := ./lib/shdoc/shdoc
@@ -23,6 +25,11 @@ SHELLCHECK_BASH := shellcheck \
 	--shell='bash'
 SHFMT := shfmt -w -d
 BASHCOV := bundle exec bashcov --
+
+BASHEMBLER := bash \
+	$(shell bash -c "((DEBUG)) && echo -n '--verbose'" ) \
+	'src/bashembler.bash' \
+	$(shell bash -c "((VERBOSE)) && echo -n '--verbose'" )
 
 # Run shellcheck on a .bash file.
 define shellcheck_bash_file
@@ -68,11 +75,11 @@ coverage-clean: # Remove coverage folder
 	@$(RM) -r '$(COVERAGE_PATH)'
 
 build-clean: # Remove built file.
-	@$(RM) -r 'bin'
+	@$(RM) -r '$(RELEASE_PATH)'
 
-bin/bashembler: # Assemble bashembler script for release.
-	@mkdir -p 'bin'
-	bash 'src/bashembler.bash' --discard-comments --output='bin/bashembler' 'src/bashembler.bash'
+$(RELEASE_PATH)/$(RELEASE_FILE): # Assemble bashembler script for release.
+	@mkdir -p '$(RELEASE_PATH)'
+	$(BASHEMBLER) --discard-comments --output='$(RELEASE_PATH)/$(RELEASE_FILE)' 'src/bashembler.bash'
 
 ###
 # Front-end rules.
@@ -88,7 +95,7 @@ help: ## Display this message.
 
 all: clean format check test build doc ## Run tests and generate documentation.
 
-build: bin/bashembler ## Build bashembler.
+build: $(RELEASE_PATH)/$(RELEASE_FILE) ## Build bashembler.
 
 check: shellcheck ## Run shellcheck on sources.
 
