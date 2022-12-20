@@ -15,9 +15,17 @@ jobs:
         with:
           submodules: 'true'
       - name: Create release asset
+        id: build
         run: |
+          log_file="$(mktemp)"
           make build-clean
-          DEBUG=1 VERBOSE=1 make build
+          VERBOSE=1 make build 2>&1
+          
+      # "${log_file}" || ( echo "::set-output name=errors::$(cat "${log_file}")" && false )
+      # - name: Build error log
+      #   if: ${{ failure() }}
+      #   run: |
+      #     echo "${{ steps.build.outputs.errors }}"
       - name: Generate asset SHA256
         id: sha256
         run: |
