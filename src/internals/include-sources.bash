@@ -208,8 +208,9 @@ function include-sources() {
       continue
     fi
 
-    # Discard comments except initial shebang.
+    # Discard comments except initial shebang and shellcheck directives.
     if [[ "${discard_comments}" -ne 0 && "${line}" =~ ^[[:blank:]]*\# &&
+          ! "${line}" == *"shellcheck"* &&
           ! (-z "${origin}" && "${line_count}" -eq 1)   ]]; then
       cecho 'DEBUG' "Debug: discarding comment at line ${line_count} of file '${input}'." >&"${verbose_fd-2}"
       # Skip comment.

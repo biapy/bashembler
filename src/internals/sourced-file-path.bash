@@ -112,7 +112,7 @@ function sourced-file-path {
   # shellcheck disable=SC1003
   file="$(echo "${source_command-}" \
     | sed -Ee 's#^[[:blank:]]*(source|\.)[[:blank:]]+("((\\"|[^"])*)"|'\''((\\'\''|[^'\''])*)'\''|((\\[ \t]|[^ \t])*))?[[:blank:]]*(;.*|\#.*)?$#\3\5\7#' \
-        || true)"
+                                                                                                                                                       || true)"
   cecho 'DEBUG' "Debug: Detected file path '${file-}'." >&"${verbose_fd-2}"
 
   if [[ "${file-}" = "${source_command-}" ]]; then
@@ -128,7 +128,7 @@ function sourced-file-path {
     return 0
   fi
 
-  input_folder="$( dirname "$( realpath "${origin-}" || true)")"
+  input_folder="$(dirname "$(realpath "${origin-}" || true)")"
 
   if [[ "${file-}" =~ ^/ ]]; then
     # Sourced file with absolute path.

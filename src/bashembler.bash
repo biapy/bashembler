@@ -159,8 +159,8 @@ EOF
       '-o' | '--output')
         # Takes an option argument; ensure it has been specified.
         if [[ -n "${2-}" ]]; then
-            output_path="${2-}"
-            shift
+          output_path="${2-}"
+          shift
         else
           cecho 'ERROR' "Error: --output requires an non-empty option argument." >&"${error_fd-2}"
           close-fds
@@ -210,8 +210,8 @@ EOF
   fi
 
   if [[ "${output_path}" != '-' &&
-        -e "${output_path}" &&
-        "${overwrite}" -eq 0 ]]; then
+    -e "${output_path}" &&
+    "${overwrite}" -eq 0 ]]; then
     cecho "ERROR" "Error: output path '${output_path}' already exists. Use --overwrite to allow overwriting." >&"${error_fd-2}"
     close-fds
     return 1
