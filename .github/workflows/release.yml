@@ -29,12 +29,12 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref }}
-          name: Bashembler ${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get-version.outputs.version }}
           artifacts: "bin/bashembler,bin/bashembler.sha512"
           body: |
             ---
             ### Assets
-            - Asset Url: https://github.com/biapy/bashembler/releases/download/${{ steps.get_version.outputs.version }}/bashembler
+            - Asset Url: https://github.com/biapy/bashembler/releases/download/${{ steps.get-version.outputs.version }}/bashembler
             - SHA Checksum: `${{ steps.sha256.outputs.bashembler }}`
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
