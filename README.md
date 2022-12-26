@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/biapy/bashembler/branch/main/graph/badge.svg?token=5XJ8H7BMG1)](https://codecov.io/gh/biapy/bashembler)
 [![CodeFactor](https://www.codefactor.io/repository/github/biapy/bashembler/badge)](https://www.codefactor.io/repository/github/biapy/bashembler)
 
-Bashembler -- contraction for bash-assembler -- aims to ease shell sccript
+Bashembler -- contraction for bash-assembler -- aims to ease shell scripts
 development by providing a way to split lenghty scripts in multiple files
 included by `source` or `.` (dot) instructions, and assembling these files
 in a final one-file script, ready for deployment.
@@ -24,6 +24,12 @@ Process `script.sh` and store result in `bin/script-for-deployment`:
 bashembler --output='bin/script-for-deployment' 'script.sh'
 ```
 
+Optionnaly, strip comments from result:
+
+```bash
+bashembler --discard-comments 'script.sh'
+```
+
 ## Third party libraries
 
 Bashembler makes use of:
@@ -32,7 +38,7 @@ Bashembler makes use of:
 - [shdoc](https://github.com/reconquest/shdoc) for generating markdown
   documentation from code.
 - [ShellCheck][shellcheck] for checking code quality.
-- [shfmt][shfmt] for formating scripts and bats unit tests.
+- [shfmt][shfmt] for formating scripts.
 - [ShellSpec][shellspec] for unit testing.
 
 ## Contributing
