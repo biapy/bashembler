@@ -22,6 +22,8 @@ jobs:
           echo "::group::build log"
           VERBOSE=1 make build 2>&1
           echo "::endgroup::"
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       # "${log_file}" || ( echo "::set-output name=errors::$(cat "${log_file}")" && false )
       # - name: Build error log
       #   if: ${{ failure() }}
