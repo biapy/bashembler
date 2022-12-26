@@ -14,6 +14,7 @@ SPEC_PATH := ./spec
 COVERAGE_PATH := ./coverage
 RELEASE_PATH := ./bin
 RELEASE_FILE := bashembler
+SHA512SUM_FILE := $(RELEASE_FILE).sha512
 
 # Define utilities pathes.
 SHDOC := ./lib/shdoc/shdoc
@@ -24,12 +25,12 @@ SHELLCHECK_BASH := shellcheck \
 	--external-sources \
 	--shell='bash'
 SHFMT := shfmt -w -d
-BASHCOV := bundle exec bashcov --
 
 BASHEMBLER := bash \
 	$(shell bash -c "((DEBUG)) && echo -n '--verbose'" ) \
 	'src/bashembler.bash' \
 	$(shell bash -c "((VERBOSE)) && echo -n '--verbose'" )
+SHA512 := shasum --algorithm=512
 
 # Run shellcheck on a .bash file.
 define shellcheck_bash_file
@@ -79,7 +80,11 @@ build-clean: # Remove built file.
 
 $(RELEASE_PATH)/$(RELEASE_FILE): # Assemble bashembler script for release.
 	@mkdir -p '$(RELEASE_PATH)'
-	$(BASHEMBLER) --discard-comments --output='$(RELEASE_PATH)/$(RELEASE_FILE)' 'src/bashembler.bash'
+	@$(BASHEMBLER) --discard-comments \
+		--output='$(RELEASE_PATH)/$(RELEASE_FILE)' \
+		'src/bashembler.bash'
+	@chmod +x '$(RELEASE_PATH)/$(RELEASE_FILE)'
+	@cd '$(RELEASE_PATH)' && $(SHA512) '$(RELEASE_FILE)' > '$(SHA512SUM_FILE)'
 
 ###
 # Front-end rules.
