@@ -60,8 +60,10 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 #
 # @exitcode 0 If `bash`` script assembly is successful.
 # @exitcode 1 If bashembler failed to assemble the script.
-# @exitcode 1 If argument is missing, or more than one argument provided.
-# @exitcode 1 If bashembler is unable to find a sourced file.
+# @exitcode 2 If argument is missing, or more than one argument provided.
+# @exitcode 3 If invalid argument provided.
+# @exitcode 4 If bashembler is unable to find a sourced file.
+# @exitcode 5 If output file can not be created or it already exists and --overwrite is not used.
 #
 # @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
 # @see [in-list](https://github.com/biapy/biapy-bashlings/blob/main/doc/in-list.md)
@@ -164,7 +166,7 @@ EOF
         else
           cecho 'ERROR' "Error: --output requires an non-empty option argument." >&"${error_fd-2}"
           close-fds
-          return 1
+          return 3
         fi
         ;;
       '--output='?*)
@@ -175,7 +177,7 @@ EOF
         # Handle the case of an empty --file=
         cecho 'ERROR' "Error: --output requires an non-empty option argument." >&"${error_fd-2}"
         close-fds
-        return 1
+        return 3
         ;;
       '--') # End of all options.
         shift
@@ -184,7 +186,7 @@ EOF
       '-'?*)
         cecho 'ERROR' "Error: option '${1}' is not recognized." >&"${error_fd-2}"
         close-fds
-        return 1
+        return 3
         ;;
       *)
         # Default case: No more options, so break out of the loop.
@@ -198,7 +200,7 @@ EOF
   if [[ ${#} -ne 1 ]]; then
     cecho "ERROR" "Error: ${FUNCNAME[0]} accept one and only one argument." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 2
   fi
 
   input_path="${1-}"
@@ -206,7 +208,7 @@ EOF
   if [[ -z "${input_path}" ]]; then
     cecho "ERROR" "Error: ${FUNCNAME[0]} requires a valid file path as argument." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 3
   fi
 
   if [[ "${output_path}" != '-' &&
@@ -214,7 +216,7 @@ EOF
     "${overwrite}" -eq 0 ]]; then
     cecho "ERROR" "Error: output path '${output_path}' already exists. Use --overwrite to allow overwriting." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 5
   fi
 
   options=()

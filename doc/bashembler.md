@@ -68,8 +68,10 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
 * **0**: If `bash`` script assembly is successful.
 * **1**: If bashembler failed to assemble the script.
-* **1**: If argument is missing, or more than one argument provided.
-* **1**: If bashembler is unable to find a sourced file.
+* **2**: If argument is missing, or more than one argument provided.
+* **3**: If invalid argument provided.
+* **4**: If bashembler is unable to find a sourced file.
+* **5**: If output file can not be created or it already exists and --overwrite is not used.
 
 #### Output on stdout
 
@@ -87,3 +89,4 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 * [in-list](https://github.com/biapy/biapy-bashlings/blob/main/doc/in-list.md)
 * [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
 * [include-sources](./internals/include-sources.md#include-sources)
+
