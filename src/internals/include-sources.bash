@@ -41,8 +41,10 @@ source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 #
 # @exitcode 0 If `bash`` script assembly is successful.
 # @exitcode 1 If include-sources failed to assemble the script.
-# @exitcode 1 If argument is missing, or more than one argument provided.
-# @exitcode 1 If include-sources is unable to find a sourced file.
+# @exitcode 2 If argument is missing, or more than one argument provided.
+# @exitcode 3 If --level option argument is not an integer.
+# @exitcode 4 If include-sources is unable to find a sourced file.
+# @exitcode 5 If output file can not be created.
 #
 # @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
 # @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
@@ -106,7 +108,7 @@ function include-sources() {
   if ! process-options "${allowed_options[*]}" ${@+"$@"} 2>&"${error_fd-2}"; then
     cecho "DEBUG" "Debug: options processing failed." >&"${verbose_fd-2}"
     close-fds
-    return 1
+    return 2
   fi
 
   declare -a options
@@ -122,7 +124,7 @@ function include-sources() {
   if [[ -z "${level}" || ! "${level}" =~ ^[0-9]+$ ]]; then
     cecho "ERROR" "Error: --level value is not an integer." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 3
   fi
 
   # Accept one and only one argument.
@@ -130,7 +132,7 @@ function include-sources() {
   if [[ ${#arguments[@]} -ne 1 ]]; then
     cecho "ERROR" "Error: ${FUNCNAME[0]} requires one and only one argument." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 2
   fi
 
   # Fetch input file path from arguments.
@@ -146,7 +148,7 @@ function include-sources() {
   if [[ ! -e "${input}" ]]; then
     cecho "ERROR" "Error: file '${input-}' does not exists." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 4
   fi
 
   # Test if output file can be created in given path.
@@ -154,7 +156,7 @@ function include-sources() {
   if [[ "${output-'/dev/stdout'}" != "/dev/stdout" && ! -d "$(dirname "${output-/dev/stdout}")" ]]; then
     cecho "ERROR" "Error: file '${output-}' directory does not exists." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 5
   fi
 
   # Generate sourced file message indent.
@@ -166,7 +168,7 @@ function include-sources() {
     if ((level > 0)); then
       cecho "ERROR" "Error: --level option requires --origin to be specified." >&"${error_fd-2}"
       close-fds
-      return 1
+      return 2
     fi
 
     # Initialize output file
@@ -175,7 +177,7 @@ function include-sources() {
       if ! (echo -n "" > "${output-'/dev/stdout'}") 2>&"${verbose_fd-2}"; then
         cecho "ERROR" "Error: error while initializing '${output-}'." >&"${error_fd-2}"
         close-fds
-        return 1
+        return 5
       fi
     fi
 

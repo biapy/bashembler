@@ -65,8 +65,10 @@ $contents="$( include-sources --origin="src/my-script.bash" "src/my-script.bash"
 
 * **0**: If `bash`` script assembly is successful.
 * **1**: If include-sources failed to assemble the script.
-* **1**: If argument is missing, or more than one argument provided.
-* **1**: If include-sources is unable to find a sourced file.
+* **2**: If argument is missing, or more than one argument provided.
+* **3**: If --level option argument is not an integer.
+* **4**: If include-sources is unable to find a sourced file.
+* **5**: If output file can not be created.
 
 #### Output on stdout
 
