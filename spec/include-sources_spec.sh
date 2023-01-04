@@ -11,7 +11,7 @@ Describe 'include-sources'
         It "fails when no argument is given"
             When call include-sources
             The status should be failure
-            The status should equal 2
+            The status should equal 1
             The output should equal ""
             The error should equal "Error: include-sources requires one and only one argument."
         End
@@ -19,7 +19,7 @@ Describe 'include-sources'
         It "fails quietly when no argument is given"
             When call include-sources --quiet
             The status should be failure
-            The status should equal 2
+            The status should equal 1
             The output should equal ""
             The error should equal ""
         End
@@ -27,7 +27,7 @@ Describe 'include-sources'
         It "fails when more than one argument is given"
             When call include-sources 'argument 1' 'argument 2'
             The status should be failure
-            The status should equal 2
+            The status should equal 1
             The output should equal ""
             The error should equal "Error: include-sources requires one and only one argument."
         End
@@ -35,7 +35,7 @@ Describe 'include-sources'
         It "fails quietly when more than one argument is given"
             When call include-sources --quiet 'argument 1' 'argument 2'
             The status should be failure
-            The status should equal 2
+            The status should equal 1
             The output should equal ""
             The error should equal ""
         End
@@ -91,7 +91,7 @@ Describe 'include-sources'
         It "fails when --level option argument is not an integer"
             When call include-sources --level=a 'argument 1'
             The status should be failure
-            The status should equal 3
+            The status should equal 2
             The output should equal ""
             The error should equal "Error: --level value is not an integer."
         End
@@ -99,7 +99,7 @@ Describe 'include-sources'
         It "fails quietly when --level option argument is not an integer"
             When call include-sources --quiet --level=a 'argument 1'
             The status should be failure
-            The status should equal 3
+            The status should equal 2
             The output should equal ""
             The error should equal ""
         End
@@ -131,7 +131,7 @@ Describe 'include-sources'
         It "fails when input file does not exists."
             When call include-sources 'missing-file.bash'
             The status should be failure
-            The status should equal 4
+            The status should equal 3
             The output should equal ""
             The error should equal "Error: file 'missing-file.bash' does not exists."
         End
@@ -139,7 +139,7 @@ Describe 'include-sources'
         It "fails quietly when input file does not exists."
             When call include-sources --quiet 'missing-file.bash'
             The status should be failure
-            The status should equal 4
+            The status should equal 3
             The output should equal ""
             The error should equal ""
         End
@@ -147,7 +147,7 @@ Describe 'include-sources'
         It "fails when output file directory does not exists."
             When call include-sources --output='missing-directory/output-file.bash' 'src/bashembler.bash'
             The status should be failure
-            The status should equal 5
+            The status should equal 4
             The output should equal ""
             The error should equal "Error: file 'missing-directory/output-file.bash' directory does not exists."
         End
@@ -155,7 +155,7 @@ Describe 'include-sources'
         It "fails quietly when output file directory does not exists."
             When call include-sources --quiet --output='missing-directory/output-file.bash' 'src/bashembler.bash'
             The status should be failure
-            The status should equal 5
+            The status should equal 4
             The output should equal ""
             The error should equal ""
         End

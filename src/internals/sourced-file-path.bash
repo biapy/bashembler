@@ -40,10 +40,10 @@ source "${BASH_SOURCE[0]%/*}/../../lib/biapy-bashlings/src/process-options.bash"
 # @stderr Error if sourced file does not exists.
 #
 # @exitcode 0 on success.
-# @exitcode 1 if invalid option is given.
 # @exitcode 1 if argument is missing or too many arguments given.
-# @exitcode 1 if source command can't be parsed.
-# @exitcode 1 if sourced file does not exists.
+# @exitcode 2 if invalid option is given.
+# @exitcode 5 if source command can't be parsed.
+# @exitcode 6 if sourced file does not exists.
 #
 # @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
 # @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
@@ -96,7 +96,7 @@ function sourced-file-path {
   ### Process function options.
   if ! process-options "${allowed_options[*]}" ${@+"$@"} 2>&"${error_fd-2}"; then
     close-fds
-    return 1
+    return 2
   fi
 
   # Accept one and only one argument.
@@ -118,7 +118,7 @@ function sourced-file-path {
   if [[ "${file-}" = "${source_command-}" ]]; then
     cecho "ERROR" "Error: unable to extract file from command '${source_command-}'." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 5
   fi
 
   if [[ -z "${origin-}" ]]; then
@@ -156,11 +156,11 @@ function sourced-file-path {
   if [[ -z "${file_realpath-}" ]]; then
     cecho 'ERROR' "Error: sourced file '${file-}' does not exists." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 6
   elif [[ ! -e "${file_realpath-}" ]]; then
     cecho 'ERROR' "Error: sourced file '${file-}' (real path '${file_realpath-}') does not exists." >&"${error_fd-2}"
     close-fds
-    return 1
+    return 6
   fi
 
   # Output file realpath and return success if file exists.

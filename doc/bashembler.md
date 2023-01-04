@@ -34,7 +34,7 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 
 * **-h** | **-?** | **--help**
 
-  Display usage information.
+Display usage information.
 
 * **-V** | **--version**
 
@@ -67,11 +67,12 @@ bashembler "src/my-script.bash" > 'bin/my-script'
 #### Exit codes
 
 * **0**: If `bash`` script assembly is successful.
-* **1**: If bashembler failed to assemble the script.
-* **2**: If argument is missing, or more than one argument provided.
-* **3**: If invalid argument provided.
-* **4**: If bashembler is unable to find a sourced file.
-* **5**: If output file can not be created or it already exists and --overwrite is not used.
+* **1**: If argument is missing, or more than one argument provided.
+* **2**: If an invalid option is given.
+* **3**: If input `$1` does not exists.
+* **4**: If output file can not be created or it already exists and --overwrite is not used..
+* **5**: if source command can't be parsed.
+* **6**: if sourced file does not exists.
 
 #### Output on stdout
 

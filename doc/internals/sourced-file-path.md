@@ -50,10 +50,10 @@ sourced_file="$(
 #### Exit codes
 
 * **0**: on success.
-* **1**: if invalid option is given.
 * **1**: if argument is missing or too many arguments given.
-* **1**: if source command can't be parsed.
-* **1**: if sourced file does not exists.
+* **2**: if invalid option is given.
+* **5**: if source command can't be parsed.
+* **6**: if sourced file does not exists.
 
 #### Output on stdout
 

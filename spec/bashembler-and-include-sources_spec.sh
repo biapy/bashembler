@@ -40,6 +40,7 @@ Describe 'bashembler & include-sources'
             # shellcheck disable=SC2154 # readonly_output_path is assigned in spec_helper.sh
             When call bashembler --output="${readonly_output_path-}/output.sh" 'src/bashembler.bash'
             The status should be failure
+            The status should equal 4
             The output should equal ""
             The error should equal "Error: error while initializing '${readonly_output_path-}/output.sh'."
         End
@@ -48,6 +49,7 @@ Describe 'bashembler & include-sources'
             # shellcheck disable=SC2154 # readonly_output_path is assigned in spec_helper.sh
             When call bashembler --quiet --output="${readonly_output_path-}/output.sh" 'src/bashembler.bash'
             The status should be failure
+            The status should equal 4
             The output should equal ""
             The error should equal ""
         End
@@ -117,6 +119,7 @@ Describe 'bashembler & include-sources'
             # shellcheck disable=SC2154
             When call "${1}" "${broken_sourcing_file}"
             The status should be failure
+            The status should equal 6
             The line 1 of output should equal "#!/bin/bash"
             The line 2 of output should equal 'echo "The broken script sourcing file contents."'
             The line 1 of error should equal "Assembling ${broken_sourcing_file}"

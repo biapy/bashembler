@@ -26,6 +26,7 @@ Describe 'bashembler'
         It "fails when no argument is given"
             When call bashembler
             The status should be failure
+            The status should equal 1
             The output should equal ""
             The error should equal "Error: bashembler accept one and only one argument."
         End
@@ -33,6 +34,7 @@ Describe 'bashembler'
         It "fails quietly when no argument is given"
             When call bashembler --quiet
             The status should be failure
+            The status should equal 1
             The output should equal ""
             The error should equal ""
         End
@@ -40,6 +42,7 @@ Describe 'bashembler'
         It "fails when more than one argument is given"
             When call bashembler 'argument 1' 'argument 2'
             The status should be failure
+            The status should equal 1
             The output should equal ""
             The error should equal "Error: bashembler accept one and only one argument."
         End
@@ -47,6 +50,7 @@ Describe 'bashembler'
         It "fails quietly when more than one argument is given"
             When call bashembler --quiet 'argument 1' 'argument 2'
             The status should be failure
+            The status should equal 1
             The output should equal ""
             The error should equal ""
         End
@@ -54,6 +58,7 @@ Describe 'bashembler'
         It "fails when an unsupported option is given"
             When call bashembler --unsupported 'argument 1'
             The status should be failure
+            The status should equal 2
             The output should equal ""
             The error should equal "Error: option '--unsupported' is not recognized."
         End
@@ -61,6 +66,7 @@ Describe 'bashembler'
         It "fails quietly when an unsupported option is given"
             When call bashembler --quiet --unsupported 'argument 1'
             The status should be failure
+            The status should equal 2
             The output should equal ""
             The error should equal ""
         End
@@ -68,6 +74,7 @@ Describe 'bashembler'
         It "fails when --output option is used without argument"
             When call bashembler --output
             The status should be failure
+            The status should equal 2
             The output should equal ""
             The error should equal "Error: --output requires an non-empty option argument."
         End
@@ -75,6 +82,7 @@ Describe 'bashembler'
         It "fails when --output option is used without argument"
             When call bashembler --output= 'argument 1'
             The status should be failure
+            The status should equal 2
             The output should equal ""
             The error should equal "Error: --output requires an non-empty option argument."
         End
@@ -82,6 +90,7 @@ Describe 'bashembler'
         It "fails quietly when --output option is used without argument"
             When call bashembler --quiet --output= 'argument 1'
             The status should be failure
+            The status should equal 2
             The output should equal ""
             The error should equal ""
         End
@@ -89,6 +98,7 @@ Describe 'bashembler'
         It "fails when input file is an empty string."
             When call bashembler ''
             The status should be failure
+            The status should equal 3
             The output should equal ""
             The error should equal "Error: bashembler requires a valid file path as argument."
         End
@@ -96,6 +106,7 @@ Describe 'bashembler'
         It "fails when input file does not exists."
             When call bashembler 'missing-file.bash'
             The status should be failure
+            The status should equal 3
             The output should equal ""
             The error should equal "Error: file 'missing-file.bash' does not exists."
         End
@@ -103,6 +114,7 @@ Describe 'bashembler'
         It "fails quietly when input file does not exists."
             When call bashembler --quiet 'missing-file.bash'
             The status should be failure
+            The status should equal 3
             The output should equal ""
             The error should equal ""
         End
@@ -110,6 +122,7 @@ Describe 'bashembler'
         It "accepts files starting by '-'."
             When call bashembler -- -missing-file.bash
             The status should be failure
+            The status should equal 3
             The output should equal ""
             The error should equal "Error: file '-missing-file.bash' does not exists."
         End
@@ -117,6 +130,7 @@ Describe 'bashembler'
         It "fails when output file directory does not exists."
             When call bashembler --output='missing-directory/output-file.bash' 'src/bashembler.bash'
             The status should be failure
+            The status should equal 4
             The output should equal ""
             The error should equal "Error: file 'missing-directory/output-file.bash' directory does not exists."
         End
@@ -124,6 +138,7 @@ Describe 'bashembler'
         It "fails quietly when output file directory does not exists."
             When call bashembler --quiet --output='missing-directory/output-file.bash' 'src/bashembler.bash'
             The status should be failure
+            The status should equal 4
             The output should equal ""
             The error should equal ""
         End
@@ -131,6 +146,7 @@ Describe 'bashembler'
         It "fails when output file already exists."
             When call bashembler --output="${output_file}" 'src/bashembler.bash'
             The status should be failure
+            The status should equal 4
             The output should equal ""
             The error should equal "Error: output path '${output_file}' already exists. Use --overwrite to allow overwriting."
         End

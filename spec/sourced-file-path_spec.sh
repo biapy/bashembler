@@ -10,6 +10,7 @@ Describe 'sourced-file-path'
     It "fails when no argument is given"
         When call sourced-file-path
         The status should be failure
+        The status should equal 1
         The output should equal ""
         The error should equal "Error: sourced-file-path requires one and only one argument."
     End
@@ -17,6 +18,7 @@ Describe 'sourced-file-path'
     It "fails quietly when no argument is given"
         When call sourced-file-path --quiet
         The status should be failure
+        The status should equal 1
         The output should equal ""
         The error should equal ""
     End
@@ -24,6 +26,7 @@ Describe 'sourced-file-path'
     It "fails when more than one argument is given"
         When call sourced-file-path 'argument 1' 'argument 2'
         The status should be failure
+        The status should equal 1
         The output should equal ""
         The error should equal "Error: sourced-file-path requires one and only one argument."
     End
@@ -31,6 +34,7 @@ Describe 'sourced-file-path'
     It "fails quietly when more than one argument is given"
         When call sourced-file-path --quiet 'argument 1' 'argument 2'
         The status should be failure
+        The status should equal 1
         The output should equal ""
         The error should equal ""
     End
@@ -38,6 +42,7 @@ Describe 'sourced-file-path'
     It "fails when an unsupported option is given"
         When call sourced-file-path --unsupported 'argument 1'
         The status should be failure
+        The status should equal 2
         The output should equal ""
         The error should equal "Error: option '--unsupported' is not recognized."
     End
@@ -45,6 +50,7 @@ Describe 'sourced-file-path'
     It "fails quietly when an unsupported option is given"
         When call sourced-file-path --quiet --unsupported 'argument 1'
         The status should be failure
+        The status should equal 2
         The output should equal ""
         The error should equal ""
     End
@@ -52,6 +58,7 @@ Describe 'sourced-file-path'
     It "fails when --origin option is used without argument"
         When call sourced-file-path --origin 'argument 1'
         The status should be failure
+        The status should equal 2
         The output should equal ""
         The error should equal "Error: --origin requires an argument."
     End
@@ -59,6 +66,7 @@ Describe 'sourced-file-path'
     It "fails quietly when --origin option is used without argument"
         When call sourced-file-path --quiet --origin 'argument 1'
         The status should be failure
+        The status should equal 2
         The output should equal ""
         The error should equal ""
     End
@@ -66,6 +74,7 @@ Describe 'sourced-file-path'
     It "fails when source command is badly formated"
         When call sourced-file-path 'soucre "file.bash"'
         The status should be failure
+        The status should equal 5
         The output should equal ""
         The error should equal "Error: unable to extract file from command 'soucre \"file.bash\"'."
     End
@@ -73,6 +82,7 @@ Describe 'sourced-file-path'
     It "fails quietly when source command is badly formated"
         When call sourced-file-path --quiet 'soucre "file.bash"'
         The status should be failure
+        The status should equal 5
         The output should equal ""
         The error should equal ""
     End
@@ -105,6 +115,7 @@ Describe 'sourced-file-path'
         # shellcheck disable=SC2016 # allow ${BASH_SOURCE} in single quotes.
         When call sourced-file-path --origin='src/bashembler.bash' 'source "${BASH_SOURCE[0]%/*}/../lib/biapy-bashlings/src/missing-file.bash"'
         The status should be failure
+        The status should equal 6
         The output should equal ""
         The error should equal "Error: sourced file '\${BASH_SOURCE[0]%/*}/../lib/biapy-bashlings/src/missing-file.bash' (real path '$(pwd -P || true)/lib/biapy-bashlings/src/missing-file.bash') does not exists."
     End
@@ -113,6 +124,7 @@ Describe 'sourced-file-path'
         # shellcheck disable=SC2016 # allow ${BASH_SOURCE} in single quotes.
         When call sourced-file-path --origin='src/bashembler.bash' 'source "internals/missing-file.bash"'
         The status should be failure
+        The status should equal 6
         The output should equal ""
         The error should equal "Error: sourced file 'internals/missing-file.bash' (real path '$(pwd -P || true)/src/internals/missing-file.bash') does not exists."
     End
@@ -121,6 +133,7 @@ Describe 'sourced-file-path'
         # shellcheck disable=SC2016 # allow ${BASH_SOURCE} in single quotes.
         When call sourced-file-path --origin='src/bashembler.bash' 'source "missing-path/missing-file.bash"'
         The status should be failure
+        The status should equal 6
         The output should equal ""
         The error should equal "Error: sourced file 'missing-path/missing-file.bash' does not exists."
     End

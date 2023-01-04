@@ -40,11 +40,12 @@ source "${BASH_SOURCE[0]%/*}/sourced-file-path.bash"
 # @stderr Error if include-sources is unable to find a sourced file.
 #
 # @exitcode 0 If `bash`` script assembly is successful.
-# @exitcode 1 If include-sources failed to assemble the script.
-# @exitcode 2 If argument is missing, or more than one argument provided.
-# @exitcode 3 If --level option argument is not an integer.
-# @exitcode 4 If include-sources is unable to find a sourced file.
-# @exitcode 5 If output file can not be created.
+# @exitcode 1 If argument is missing, or more than one argument provided.
+# @exitcode 2 If an invalid option is given.
+# @exitcode 3 If input `$1` does not exists.
+# @exitcode 4 If output file can not be created.
+# @exitcode 5 if source command can't be parsed.
+# @exitcode 6 if sourced file does not exists.
 #
 # @see [cecho](https://github.com/biapy/biapy-bashlings/blob/main/doc/cecho.md)
 # @see [realpath](https://github.com/biapy/biapy-bashlings/blob/main/doc/realpath.md)
@@ -67,6 +68,7 @@ function include-sources() {
   local options
   local include_options
 
+  local return_code
   local line
   local line_count
   local source_command
@@ -124,7 +126,7 @@ function include-sources() {
   if [[ -z "${level}" || ! "${level}" =~ ^[0-9]+$ ]]; then
     cecho "ERROR" "Error: --level value is not an integer." >&"${error_fd-2}"
     close-fds
-    return 3
+    return 2
   fi
 
   # Accept one and only one argument.
@@ -132,7 +134,7 @@ function include-sources() {
   if [[ ${#arguments[@]} -ne 1 ]]; then
     cecho "ERROR" "Error: ${FUNCNAME[0]} requires one and only one argument." >&"${error_fd-2}"
     close-fds
-    return 2
+    return 1
   fi
 
   # Fetch input file path from arguments.
@@ -148,7 +150,7 @@ function include-sources() {
   if [[ ! -e "${input}" ]]; then
     cecho "ERROR" "Error: file '${input-}' does not exists." >&"${error_fd-2}"
     close-fds
-    return 4
+    return 3
   fi
 
   # Test if output file can be created in given path.
@@ -156,7 +158,7 @@ function include-sources() {
   if [[ "${output-'/dev/stdout'}" != "/dev/stdout" && ! -d "$(dirname "${output-/dev/stdout}")" ]]; then
     cecho "ERROR" "Error: file '${output-}' directory does not exists." >&"${error_fd-2}"
     close-fds
-    return 5
+    return 4
   fi
 
   # Generate sourced file message indent.
@@ -177,7 +179,7 @@ function include-sources() {
       if ! (echo -n "" > "${output-'/dev/stdout'}") 2>&"${verbose_fd-2}"; then
         cecho "ERROR" "Error: error while initializing '${output-}'." >&"${error_fd-2}"
         close-fds
-        return 5
+        return 4
       fi
     fi
 
@@ -254,14 +256,18 @@ function include-sources() {
     if [[ -z "${sourced_file}" ]]; then
       # try to get sourced file path relative to input file.
       cecho 'DEBUG' "Debug: trying to get source file relative to input '${input}'." >&"${verbose_fd-2}"
-      if ! sourced_file="$(
+      if sourced_file="$(
         sourced-file-path ${options[@]+"${options[@]}"} \
           --origin="${input-}" \
           "${source_command-}" 2>&"${verbose_fd-2}"
       )"; then
+        # Nothing to do on success, but this allows to get the exact exit code.
+        :
+      else
+        return_code="${?}"
         cecho "ERROR" "Error: can not resolve command '${source_command-}' in file '${input}'." >&"${error_fd-2}"
         close-fds
-        return 1
+        return "${return_code}"
       fi
     fi
 
@@ -289,19 +295,23 @@ function include-sources() {
     # Write sourced file contents to output.
     cecho 'DEBUG' "Debug: including file '${sourced_file}' in output." >&"${verbose_fd-2}"
 
-    if ! include-sources ${options[@]+"${options[@]}"} \
+    if include-sources ${options[@]+"${options[@]}"} \
         ${include_options[@]+"${include_options[@]}"} \
         --level=$((level + 1)) \
         --origin="${source_origin-}" \
         --output="${output-'/dev/stdout'}" \
         "${sourced_file-}"; then
+      # Nothing to do on success, but this allows to get the exact exit code.
+      :
+    else
+      return_code="${?}"
       if [[ -z "${origin-}" ]]; then
         cecho "ERROR" "Error: failed during assembly of file '${input-}'." >&"${error_fd-2}"
       else
         cecho "ERROR" "Error: failed including file '${source_origin-}' in '${input-}'." >&"${error_fd-2}"
       fi
       close-fds
-      return 1
+      return "${return_code}"
     fi
 
   done < "${input-}"
