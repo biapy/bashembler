@@ -58,7 +58,7 @@ source "${BASH_SOURCE[0]%/*}/internals/include-sources.bash"
 # @stderr Error if output path exist, and --overwrite option is missing.
 # @stderr Error if bashembler is unable to find a sourced file.
 #
-# @exitcode 0 If `bash`` script assembly is successful.
+# @exitcode 0 If `bash` script assembly is successful.
 # @exitcode 1 If argument is missing, or more than one argument provided.
 # @exitcode 2 If an invalid option is given.
 # @exitcode 3 If input `$1` does not exists.

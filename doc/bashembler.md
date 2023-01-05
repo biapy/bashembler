@@ -66,7 +66,7 @@ Display usage information.
 
 #### Exit codes
 
-* **0**: If `bash`` script assembly is successful.
+* **0**: If `bash` script assembly is successful.
 * **1**: If argument is missing, or more than one argument provided.
 * **2**: If an invalid option is given.
 * **3**: If input `$1` does not exists.
