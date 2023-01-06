@@ -12,6 +12,7 @@ SOURCE_PATH := ./src
 DOC_PATH := ./doc
 SPEC_PATH := ./spec
 COVERAGE_PATH := ./coverage
+MAN_PATH := ./man
 RELEASE_PATH := ./bin
 RELEASE_FILE := bashembler
 SHA512SUM_FILE := $(RELEASE_FILE).sha512
@@ -29,7 +30,7 @@ SHFMT := shfmt -w -d
 BASHEMBLER := bash \
 	$(shell bash -c "((DEBUG)) && echo -n '--verbose'" ) \
 	'src/bashembler.bash' \
-	$(shell bash -c "((VERBOSE)) && echo -n '--verbose'" )
+	--overwrite $(shell bash -c "((VERBOSE)) && echo -n '--verbose'" )
 SHA512 := shasum --algorithm=512
 
 # Run shellcheck on a .bash file.
@@ -78,13 +79,20 @@ coverage-clean: # Remove coverage folder
 build-clean: # Remove built file.
 	@$(RM) -r '$(RELEASE_PATH)'
 
-$(RELEASE_PATH)/$(RELEASE_FILE): # Assemble bashembler script for release.
+$(RELEASE_PATH)/$(RELEASE_FILE): $(SOURCE_PATH)/bashembler.bash $(SOURCE_PATH)/internals/include-sources.bash $(SOURCE_PATH)/internals/sourced-file-path.bash # Assemble bashembler script for release.
 	@mkdir -p '$(RELEASE_PATH)'
 	@$(BASHEMBLER) --discard-comments \
 		--output='$(RELEASE_PATH)/$(RELEASE_FILE)' \
-		'src/bashembler.bash'
+		'$(SOURCE_PATH)/bashembler.bash'
 	@chmod +x '$(RELEASE_PATH)/$(RELEASE_FILE)'
-	@cd '$(RELEASE_PATH)' && $(SHA512) '$(RELEASE_FILE)' > '$(SHA512SUM_FILE)'
+#	cd '$(RELEASE_PATH)' && $(SHA512) '$(RELEASE_FILE)' > '$(SHA512SUM_FILE)'
+
+$(MAN_PATH)/bashembler.1: $(SOURCE_PATH)/bashembler.1.md # Generate bashembler.1 man page.
+	@mkdir -p '$(MAN_PATH)'
+	pandoc --standalone \
+		--to 'man' \
+		--output='$(MAN_PATH)/bashembler.1' \
+		'src/bashembler.1.md'
 
 ###
 # Front-end rules.
@@ -115,3 +123,5 @@ coverage: ## Compute tests coverage
 doc: $(MD_FILES) ## Generate documentation from sources using shdoc.
 
 clean: coverage-clean doc-clean build-clean readme-clean ## Remove all generated documentation files and remove functions list from README.md
+
+man: man/bashembler.1 ## Generate man pages.

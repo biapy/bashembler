@@ -35,8 +35,9 @@ bashembler --discard-comments 'script.sh'
 Bashembler makes use of:
 
 - [Biapy bashlings](https://github.com/biapy/biapy-bashlings).
-- [shdoc](https://github.com/reconquest/shdoc) for generating markdown
+- [shdoc](https://github.com/reconquest/shdoc) for building markdown
   documentation from code.
+- [Pandoc](https://pandoc.org) for creating `man` page.
 - [ShellCheck][shellcheck] for checking code quality.
 - [shfmt][shfmt] for formating scripts.
 - [ShellSpec][shellspec] for unit testing.
