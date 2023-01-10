@@ -1,0 +1,16 @@
+---
+###########################
+###########################
+## Markdown Linter rules ##
+###########################
+###########################
+
+# Linter rules doc:
+# - https://github.com/DavidAnson/markdownlint
+
+###############
+# Rules by id #
+###############
+# First line in a file should be a top-level heading
+# Disabled for man page mardown source.
+MD041: false

@@ -2,19 +2,16 @@
 % Pierre-Yves Landuré <contact@biapy.fr>
 % January 2023
 
-<!-- markdownlint-disable-next-line MD041 -->
 # NAME
 
 Bashembler - assemble a shell script sourcing multiple scripts into one file.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # SYNOPSIS
 
 **bashembler** [*OPTION*...] *SHELL_SCRIPT_FILE* > *OUTPUT_FILE*
 
 **bashembler** [*OPTION*...] [ **-o** *OUTPUT_FILE* | **--output=***OUTPUT_FILE* ] *SHELL_SCRIPT_FILE*
 
-<!-- markdownlint-disable-next-line MD041 -->
 # DESCRIPTION
 
 bashembler, contraction for bash-assembler build one-file bash script
@@ -24,7 +21,6 @@ file.
 If available, resulting script is formated using `shfmt`
 and checked using `shellcheck`.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # OPTIONS
 
 **-h**, **-?**, **--help**
@@ -55,7 +51,6 @@ and checked using `shellcheck`.
 
 : Write output to given path.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # EXIT STATUS
 
 **0**
@@ -86,13 +81,11 @@ and checked using `shellcheck`.
 
 : Sourced file not found
 
-<!-- markdownlint-disable-next-line MD041 -->
 # RETURN VALUE
 
 If **--output** option is not used, **bashembler** output the assembled script
 on stdout. If **--quiet** is not used, it lists assembled files on stderr.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # BUGS
 
 ## Reporting bugs
@@ -111,7 +104,6 @@ generation:
 * **source** and **.** (dot) commands parsing is minimal, and heavily `bash` oriented.
   As it is **bashembler** may not correctly process `zsh` or `fish` scripts.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # EXAMPLE
 
 **bashembler** **-h** | **bashembler** **-?** | **bashembler** **--help**
@@ -134,7 +126,6 @@ generation:
 
 : Assemble *script.sh* file and output results to *output.sh* file.
 
-<!-- markdownlint-disable-next-line MD041 -->
 # SEE ALSO
 
 * [Replacing source file with its content, and expanding variables, in bash](https://stackoverflow.com/questions/37531927/replacing-source-file-with-its-content-and-expanding-variables-in-bash)
