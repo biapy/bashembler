@@ -4,14 +4,15 @@
 .hy
 .SH NAME
 .PP
-bashembler - build one-file bash script from multiple files source.
+Bashembler - assemble a shell script sourcing multiple scripts into one
+file.
 .SH SYNOPSIS
 .PP
 \f[B]bashembler\f[R] [\f[I]OPTION\f[R]\&...] \f[I]SHELL_SCRIPT_FILE\f[R]
 > \f[I]OUTPUT_FILE\f[R]
 .PP
-\f[B]bashembler\f[R] [\f[I]OPTION\f[R]\&...] [ \f[I]-o\f[R]
-\f[I]OUTPUT_FILE\f[R] | \f[I]\[en]output=OUTPUT_FILE\f[R] ]
+\f[B]bashembler\f[R] [\f[I]OPTION\f[R]\&...] [ \f[B]-o\f[R]
+\f[I]OUTPUT_FILE\f[R] | \f[B]\[en]output=\f[R]\f[I]OUTPUT_FILE\f[R] ]
 \f[I]SHELL_SCRIPT_FILE\f[R]
 .SH DESCRIPTION
 .PP
@@ -19,8 +20,8 @@ bashembler, contraction for bash-assembler build one-file bash script by
 including assembled script and sourced scripts into an unique output
 file.
 .PP
-If available, resulting script is formated using \f[B]shfmt\f[R] and
-checked using \f[B]shellcheck\f[R].
+If available, resulting script is formated using \f[C]shfmt\f[R] and
+checked using \f[C]shellcheck\f[R].
 .SH OPTIONS
 .TP
 \f[B]-h\f[R], \f[B]-?\f[R], \f[B]\[en]help\f[R]
@@ -67,10 +68,9 @@ Unrecognized source command in input
 Sourced file not found
 .SH RETURN VALUE
 .PP
-If \f[I]\[en]output\f[R] option is not used, \f[B]bashembler\f[R] output
-the assembled script on \f[B]stdout\f[R].
-If \f[I]\[en]quiet\f[R] is not used, it lists assembled files on
-\f[B]stderr\f[R].
+If \f[B]\[en]output\f[R] option is not used, \f[B]bashembler\f[R] output
+the assembled script on stdout.
+If \f[B]\[en]quiet\f[R] is not used, it lists assembled files on stderr.
 .SH BUGS
 .SS Reporting bugs
 .PP
@@ -83,29 +83,28 @@ It reads the scripts contents line by line.
 This can lead to unwanted behaviour during output generation:
 .IP \[bu] 2
 \f[B]\[en]discard-comments\f[R] remove all lines starting by
-\f[B]#\f[R], weither the line is in a multiline string or a EOF section.
+\f[C]#\f[R], weither the line is in a multiline string or a EOF section.
 .IP \[bu] 2
 \f[B]source\f[R] and \f[B].\f[R] (dot) commands parsing is minimal, and
-heavily \f[B]bash\f[R] oriented.
-As it is \f[B]bashembler\f[R] may not correctly process \f[B]zsh\f[R] or
-\f[B]fish\f[R] scripts.
+heavily \f[C]bash\f[R] oriented.
+As it is \f[B]bashembler\f[R] may not correctly process \f[C]zsh\f[R] or
+\f[C]fish\f[R] scripts.
 .SH EXAMPLE
 .TP
-\f[B]bashembler\f[R] \f[I]-h\f[R] | \f[B]bashembler\f[R] \f[I]-?\f[R] | \f[B]bashembler\f[R] \f[I]\[en]help\f[R]
+\f[B]bashembler\f[R] \f[B]-h\f[R] | \f[B]bashembler\f[R] \f[B]-?\f[R] | \f[B]bashembler\f[R] \f[B]\[en]help\f[R]
 Displays usage information, then exits.
 .TP
-\f[B]bashembler\f[R] \f[I]-V\f[R] | \f[B]bashembler\f[R] \f[I]\[en]version\f[R]
+\f[B]bashembler\f[R] \f[B]-V\f[R] | \f[B]bashembler\f[R] \f[B]\[en]version\f[R]
 Displays version information, then exits.
 .TP
 \f[B]bashembler\f[R] \f[I]script.sh\f[R]
-Assemble \f[I]script.sh\f[R] file and output results to
-\f[B]stdout\f[R].
+Assemble \f[I]script.sh\f[R] file and output results to stdout.
 .TP
 \f[B]bashembler\f[R] \f[I]script.sh\f[R] > \f[I]output.sh\f[R]
 Assemble \f[I]script.sh\f[R] file and pipe results to
 \f[I]output.sh\f[R] file.
 .TP
-\f[B]bashembler\f[R] \[en]output=\f[I]output.sh\f[R] \f[I]script.sh\f[R]
+\f[B]bashembler\f[R] \f[B]\[en]output=\f[R]\f[I]output.sh\f[R] \f[I]script.sh\f[R]
 Assemble \f[I]script.sh\f[R] file and output results to
 \f[I]output.sh\f[R] file.
 .SH SEE ALSO
