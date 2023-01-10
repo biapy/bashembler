@@ -10,7 +10,7 @@ Bashembler - assemble a shell script sourcing multiple scripts into one file.
 
 **bashembler** [*OPTION*...] *SHELL_SCRIPT_FILE* > *OUTPUT_FILE*
 
-**bashembler** [*OPTION*...] [ **-o** *OUTPUT_FILE* | **--output=***OUTPUT_FILE* ] *SHELL_SCRIPT_FILE*
+**bashembler** [*OPTION*...] [**-w**] [**-o** *OUTPUT_FILE*] *SHELL_SCRIPT_FILE*
 
 # DESCRIPTION
 
@@ -53,30 +53,37 @@ and checked using `shellcheck`.
 
 # EXIT STATUS
 
+<!-- markdownlint-disable-next-line MD036 -->
 **0**
 
 : Success
 
+<!-- markdownlint-disable-next-line MD036 -->
 **1**
 
 : Incorrect number of arguments given
 
+<!-- markdownlint-disable-next-line MD036 -->
 **2**
 
 : Invalid option given
 
+<!-- markdownlint-disable-next-line MD036 -->
 **3**
 
 : Input file not found
 
+<!-- markdownlint-disable-next-line MD036 -->
 **4**
 
 : Unable to create output file
 
+<!-- markdownlint-disable-next-line MD036 -->
 **5**
 
 : Unrecognized source command in input
 
+<!-- markdownlint-disable-next-line MD036 -->
 **6**
 
 : Sourced file not found
