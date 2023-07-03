@@ -6,9 +6,11 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/biapy/bashembler/badge)](https://www.codefactor.io/repository/github/biapy/bashembler)
 
 Bashembler -- contraction for bash-assembler -- aims to ease shell scripts
-development by providing a way to split lenghty scripts in multiple files
+development by providing a way to split lengthy scripts in multiple files
 included by `source` or `.` (dot) instructions, and assembling these files
-in a final one-file script, ready for deployment.
+in a final single-file script, ready for deployment.
+
+[Bashembler @ Docker Hub](https://hub.docker.com/r/biapy/bashembler/).
 
 ## Usage
 
@@ -16,18 +18,26 @@ Process `script.bash` and output the result to `stdout`:
 
 ```bash
 bashembler 'script.bash'
+# Using docker
+docker run --rm --volume '.:/data'  'biapy/bashembler' 'script.bash'
 ```
 
 Process `script.sh` and store result in `bin/script-for-deployment`:
 
 ```bash
-bashembler --output='bin/script-for-deployment' 'script.sh'
+bashembler --output='bin/script-for-deployment' 'script.bash'
+# Using docker
+docker run --rm --volume '.:/data'  'biapy/bashembler' \
+  --output='bin/script-for-deployment' 'script.bash'
 ```
 
-Optionnaly, strip comments from result:
+Optionally, strip comments from result:
 
 ```bash
-bashembler --discard-comments 'script.sh'
+bashembler --discard-comments 'script.bash'
+# Using docker
+docker run --rm --volume '.:/data'  'biapy/bashembler' \
+  --discard-comments 'script.bash'
 ```
 
 ## Third party libraries
