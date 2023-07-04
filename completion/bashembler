@@ -1,0 +1,48 @@
+# @file completion/bashembler
+# @author Pierre-Yves Landuré < contact at biapy dot fr >
+# @brief bash-completion for bashembler.
+# @description
+#   bash-completion configuration for bashembler command-line.
+
+# @description
+#   Generate bash-completion for bashembler.
+#
+# @example
+#   complete -F '_bashembler' 'bashembler'
+#
+# @arg $1 string name of the command whose arguments are being completed (bashembler).
+# @arg $2 string word being completed.
+# @arg $3 string word preceding the word being completed
+#
+# @set COMPREPLY the bashembler completion list.
+#
+# @exitcode 0 If completion successfully generated.
+# @exitcode 1 If the number of arguments is invalid.
+# @exitcode 2 If the command name is invalid.
+#
+# @see https://www.gnu.org/software/bash/manual/html_node/Programmable-Completion-Builtins.html
+function _bashembler() {
+  [[ "${#}" -ne 3 ]] && return 1
+  [[ "${1}" != 'bashembler' ]] && return 2
+  # latest="${COMP_WORDS[${COMP_CWORD}]}"
+  local latest="${2}"
+
+  local words=(
+    '-h' '-?' '--help' '-V' '--version' '-q' '--quiet' '-v' '--verbose'
+    '-c' '--discard-comments' '-w' '--overwrite' '-o' '--output'
+  )
+
+  if [[ "${latest}" =~ ^--output= ]]; then
+    mapfile -t 'COMPREPLY' \
+      < <(compgen -P '--output=' -f -- "${latest##--output=}")
+    return 0
+  fi
+
+  local words_string
+  printf -v 'words_string' "%s" "${words[@]/#/ }"
+  mapfile -t 'COMPREPLY' \
+    < <(compgen -W "${words_string}" -f -- "${latest}")
+  return 0
+}
+
+complete -o 'filenames' -F '_bashembler' 'bashembler'
